@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Lost Person Behavior Mapper</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+     <script type="text/javascript"
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhph1yDGf1enrJg1vuO94LoE3Tlym9jLs&sensor=false"></script>
+	<link href="css/custom-theme/jquery-ui-1.10.3.custom.css" rel="stylesheet">
+	<script src="js/jquery-1.9.1.js"></script>
+	<script src="js/jquery-ui-1.10.3.custom.min.js"></script>
+    <link href='http://fonts.googleapis.com/css?family=PT+Sans' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Lato:300' rel='stylesheet' type='text/css'>
+    <link href='css/style.css' rel='stylesheet' type='text/css'>
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <script type="text/javascript" src="js/main.js"></script>
+    <script type="text/javascript" src="js/maplabel.js"></script>
+    <script type="text/javascript" src="js/coordinates.js"></script>
+    <script type="text/javascript" src="js/behavior-table.js"></script>
+    <script type="text/javascript" src="js/direction.js"></script>
+    <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-42358244-2', 'sarmapper.org');
+  ga('send', 'pageview');
+
+</script>
+  </head>
+  <body>
+  <div id="container">
+  <div id="mapcontainer">
+  <div id="panelcontainer">
+       <div id="panel">
+     <input id="address" type="textbox" value="Yosemite National Park " onClick="if(this.value=='Yosemite National Park '){this.value=''}"class="u2" size="30">
+      <button onClick="codeAddress()" class="minimal">Search</button>
+           <button onClick="setLKP()" class="minimal" style="width:90px">Set IPP</button>
+
+	</div>
+     <div id="panel-bottom">
+     </div>
+    <div id="map-canvas"></div>
+  </div>
+  </div>
+  <div id="sidebar">
+  <div id="infoPanel">
+    <h1>LOST PERSON<br>BEHAVIOR MAPPER</h1>
+    <span id="byline">Data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester<br>
+    Visualization by <a href="http://www.linkedin.com/profile/view?id=66261525">Ryan Villanueva</a> of <a href="http://marinsar.org/">Marin Search and Rescue</a></span><br><br>
+    <div id="optionsPanel">
+    <h2>MISSING PERSON PROFILE</h2>
+    <h3>Behavior</h3>
+    <label for="behavior"></label>
+    <select name="behavior" id="behavior" class="minimal">
+      <option value="abduction">Abduction</option>
+      <option value="angler">Angler</option>
+      <option value="atv">ATV</option>
+      <option value="autistic">Autistic</option>
+      <option value="camper">Camper</option>
+      <option value="caver">Caver</option>
+      <option value="child1to3">Child (Toddler, 1-3 yrs)</option>
+      <option value="child4to6">Child (Preschool, 4-6 yrs)</option>
+      <option value="child7to9">Child (School Age, 7-9 yrs)</option>
+      <option value="child10to12">Child (Pre-Teen, 10-12 yrs)</option>
+      <option value="child13to15">Child (Youth, 13-15 yrs)</option>
+      <option value="climber">Climber (Sport)</option>
+      <option value="dementia">Dementia (Alzheimer's)</option>
+      <option value="despondent">Despondent</option>
+      <option value="gatherer">Gatherer</option>
+      <option value="hiker" selected="selected">Hiker</option>
+      <option value="hunter">Hunter</option>
+      <option value="horsebackrider">Horseback Rider</option>
+      <option value="mentalillness">Mental Illness</option>
+      <option value="mentaldisability">Mental Disability</option>
+      <option value="mountainbiker">Mountain Biker</option>
+      <option value="runner">Runner</option>
+      <option value="skieralpine">Skier (Alpine)</option>
+      <option value="skiernordic">Skier (Nordic)</option>
+      <option value="snowboarder">Snowboarder</option>
+      <option value="snowmobiler">Snowmobiler</option>
+      <option value="snowshoer">Snowshoer</option>
+      <option value="substanceabuse">Substance Abuse</option>
+      <option value="vehicle">Vehicle (All)</option>
+      <option value="4wd">Vehicle (4wd)</option>
+      <option value="abandonedvehicle">Vehicle (Abandoned)</option>
+      <option value="worker">Worker</option>
+      
+    </select>
+    <h3>Environment</h3> <input type="radio" name="environment" value="Temperate" id="environment_temperate" class="environment" checked> Temperate &nbsp;<input type="radio" name="environment" value="Dry" id="environment_dry" class="environment"> Dry &nbsp; <input type="radio" name="environment" value="Urban" id="environment_urban" class="environment"> Urban
+    <h3>Terrain</h3>
+    <input type="radio" name="terrain" value="Mountain" id="terrain_mtn" class="terrain" checked> Mountain &nbsp;<input type="radio" name="terrain" value="Flat" id="terrain_flat" class="terrain"> Flat
+    <div id="profile"></div>
+    <h3>Initial Planning Point (IPP) <span class="helper" title="The initial planning point is the point used (such as a Place Last Seen or Last Known Point) for initial planning." >(?)</span></h3>
+    <div id="currentlatlng"></div>
+    <input type="text" id="currentLat" class="u1" size="16"><input type="text" id="currentLng" class="u1" size="16">
+	<br>
+    <small>Drag and drop marker or input coordinates (WGS84).</small><br>
+    <h3>Dispersion Angle</h3>
+    <input type="checkbox" name="dispersionAvg" value="Dispersion Average" id="dispersionAvg"> <small>Use aggregated data</small> <span id="LatLngHelp" title="Uses average dispersion angle data aggregated from all behavioral profiles. Useful when there is no dispersion angle data or sample size is low for selected profile." class="helper">(?)</span>
+    <br><br>
+     <button class="minimal" id="updateButton" style="margin-left:0px">Update</button><br>
+     </div>
+     <br>
+<h2>VIEW OPTIONS</h2>
+Distance from LKP<br>
+25%: <button id="toggle25" onClick="toggleProb(0)" class="minimal Toggle On"><span id="toggle25text">On</span></button>
+50%: <button id="toggle50" onClick="toggleProb(1)" class="minimal Toggle On"><span id="toggle50text">On</span></button>
+75%: <button id="toggle75" onClick="toggleProb(2)" class="minimal Toggle On"><span id="toggle75text">On</span></button>
+95%: <button id="toggle95" onClick="toggleProb(3)" class="minimal Toggle On"><span id="toggle95text">On</span></button>
+<br><br>
+Dispersion Angle<br>
+25%: <button id="toggleDispersion25" onClick="toggleDispersion(0)" class="minimal Toggle On"><span id="toggleDispersion25text">On</span></button>
+50%: <button id="toggleDispersion50" onClick="toggleDispersion(2)" class="minimal Toggle On"><span id="toggleDispersion50text">On</span></button>
+75%: <button id="toggleDispersion75" onClick="toggleDispersion(4)" class="minimal Toggle On"><span id="toggleDispersion75text">On</span></button>
+95%: <button id="toggleDispersion95" onClick="toggleDispersion(6)" class="minimal Toggle On"><span id="toggleDispersion95text">On</span></button><br><br>
+Direction: <button id='toggleDOT' onclick='toggleDOT();' style="margin-left:0px" class = "minimal Toggle On"/><span id="toggleDOTtext">On</span></button>
+<br><br>
+<h2>STATISTICS</h2>
+<h3>Distance from IPP</h3>
+<div><strong>Sample Size: </strong><span id="sample"></span> <span class="helper" title="Warning: If sample size is below 30, data presented may not represent accurate probabilities. Full data summaries are available in the Lost Person Behavior book by Robert Koester." >(?)</span></div>
+
+<h3>Dispersion Angle</h3>
+<div><strong>Sample Size: </strong><span id="sampleDispersion"></span> <span class="helper" title="Warning: If sample size is below 30, data presented may not represent accurate probabilities. Use aggregated data instead. Full data summaries are available in the Lost Person Behavior book by Robert Koester." >(?)</span></div>
+<br>
+If you are interested in learning more and obtaining the summary data sets, please <a href="https://www.dbs-sar.com/LPB/lpb.htm">purchase a book from dbS Productions</a>.
+
+
+<div id="footer"><span style="font-size: .7em">
+The Lost Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.<br>
+<br>Interface and visualization designed by <a href="http://www.linkedin.com/profile/view?id=66261525">Ryan Villanueva</a> <a href="mailto:ryanvill@gmail.com">(contact)</a> and may be used under GNU General Public License v3.0.<br>Lost person behavior data is sole property of <a href="https://www.dbs-sar.com/">dbS Productions</a>.
+</small></div>
+</div>
+</div>
+</div>
+</div>
+  </body>
+</html>
