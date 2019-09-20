@@ -15,8 +15,9 @@ export default class App extends React.Component {
     this.profiler = new BehaviorProfiles();
     this.downloader = new Downloader();
     this.mapRef = null;
+    const behavior = this.profiler.getClosestBehaviorByHierarchy(['hiker', 'temperate', 'mtn']);
     this.state = {
-      behavior: this.profiler.getClosestBehaviorByHierarchy(['hiker', 'temperate', 'mtn']).toJSON(),
+      behavior: behavior.toJSON(),
       mapCenter: startingPoint,
       ipp: startingPoint
     };

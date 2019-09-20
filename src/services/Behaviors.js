@@ -1,4 +1,4 @@
-import {behaviors} from '../data/behaviors';
+import {profiles as profileData, dispersions as dispersionData} from '../data/behaviors';
 const distanceNames = ['25%', '50%', '75%', '95%']
 
 export class Behavior {
@@ -7,7 +7,17 @@ export class Behavior {
     this.n = data.n;
     this.hierarchy = data.hierarchy;
     this.distances = data.distances;
-    this.dispersion = data.dispersion || null;
+    this.dispersion = this.getDispersion();
+  }
+  getDispersion() {
+    function filterUsingHierarchy(dispersions, remainingHierarchy) {
+      if(dispersions.length === 1) return dispersions[0];
+      const filtered = dispersions.filter(dispersion => dispersion.hierarchy[0] === remainingHierarchy[0]);
+      if(filtered.length === 1) return filtered[0];
+      if(filtered.length === 0 || remainingHierarchy.length === 1) return dispersions[0];
+      return filterUsingHierarchy(filtered, remainingHierarchy.slice(1));
+    }
+    return filterUsingHierarchy(dispersionData, this.hierarchy);
   }
   getName() {
     return `${this._id}`;
@@ -22,9 +32,8 @@ export class Behavior {
 
 export default class BehaviorProfiles {
   constructor() {
-    this.behaviors = behaviors.map(behavior => new Behavior(behavior));
-    this.taxonomy = this.buildTaxonomy();
-    this.types = [Object.keys(this.taxonomy), ['temperate', 'dry', 'urban'], ['flat', 'mtn']];
+    this.profiles = profileData;
+    this.types = [Object.keys(this.profiles), ['temperate', 'dry', 'urban'], ['flat', 'mtn']];
   }
   searchTree(parent, searchKeys, path = [], level = 0) {
     const found = this.selectBestChild(parent, level, searchKeys[level]);
@@ -50,39 +59,23 @@ export default class BehaviorProfiles {
     }
   }
   getClosestBehaviorByHierarchy(requestedHierarchy) {
-    return this.searchTree({
-      children: this.taxonomy
+    const behavior = this.searchTree({
+      children: this.profiles
     }, requestedHierarchy).child.behavior;
+    return new Behavior(behavior);
   }
   getProfiles() {
     return {
-      allIds: Object.keys(this.taxonomy),
-      byId: this.taxonomy
+      allIds: Object.keys(this.profiles),
+      byId: this.profiles
     }
   }
   getBehavior = (keys) => {
-    return this.getChildByKeys(this.taxonomy[keys[0]], keys.slice(1)).behavior;
+    return this.getChildByKeys(this.profiles[keys[0]], keys.slice(1)).behavior;
   }
   getChildByKeys(parent, keys) {
     if(!keys || keys.length === 0) return parent;
     const child = parent.children[keys[0]];
     return this.getChildByKeys(child, keys.slice(1));
-  }
-  buildTaxonomy() {
-    return this.behaviors.reduce((a, behavior) => {
-      function setChildren(parent, children, behavior) {
-        parent.children = parent.children || null;
-        if(children.length > 0) {
-          parent.children = parent.children || {};
-          parent.children[children[0]] = parent.children[children[0]] || {}
-          parent.behavior = parent.behavior || null;
-          setChildren(parent.children[children[0]], children.slice(1), behavior);
-        } else {
-          parent.behavior = behavior;
-        }
-        return parent;
-      }
-      return setChildren(a, behavior.hierarchy, behavior)
-    }, {}).children;
   }
 }
