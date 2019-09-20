@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@mapbox/mapbox-gl-geocoder": "^4.4.2",
     "eslint-utils": "^1.4.2",
     "geolib": "^3.0.4",
     "js-file-download": "^0.4.8",

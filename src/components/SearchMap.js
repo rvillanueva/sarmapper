@@ -70,11 +70,14 @@ export default class SearchMap extends React.Component {
     this.redrawAnnotations();
   }
   clearRings() {
-    this.map.clearLayersByType('ring');
+    this.map.clearLayersByType('ringCollection');
+    this.map.clearLayersByType('labelCollection');
   }
   drawRings() {
-    this.ipp.getRangeRings()
-      .forEach(ring => this.map.addLayer('ring', ring.getLayer()));
+    const ringCollectionLayer = this.ipp.getRangeRingCollectionLayer();
+    const labelCollectionLayer = this.ipp.getLabelCollectionLayer();
+    this.map.addLayer('ringCollection', ringCollectionLayer);
+    this.map.addLayer('labelCollection', labelCollectionLayer);
   }
   drawIPP() {
     this.map.updateMarkerById(this.ippMarker._id, {

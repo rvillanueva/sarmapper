@@ -1,12 +1,10 @@
-import UUIDV4 from 'uuid/v4';
 import {computeDestinationPoint} from 'geolib';
-
+import LngLat from './LngLat';
 export default class RangeRing {
-  constructor(lngLat, distance, name = '', shortLabel) {
+  constructor(lngLat, distance, name = '') {
     this.center = lngLat;
     this.distance = distance;
-    this.name = name;
-    this.shortLabel = shortLabel;
+    this.name = `${name} - ${distance / 1000}km`;
     this.points = this.calculatePoints();
 
   }
@@ -17,26 +15,28 @@ export default class RangeRing {
       this.distance,
       bearing
     ));
-    return points.map(point => [point.longitude, point.latitude]);
+    return points.map(point => new LngLat([point.longitude, point.latitude]));
+  }
+  getLabelPosition() {
+    return this.points[0];
+  }
+  getLabelText() {
+    return this.name;
   }
   getGeoJSON() {
     return {
       'type': 'geojson',
       'data': {
         'type': 'Feature',
-        'properties': {
-          'name': this.name
-        },
         'geometry': {
           'type': 'LineString',
-          'coordinates': this.points
+          'coordinates': this.points.map(point => [point.lng, point.lat])
         }
       },
     };
   }
   getLayer() {
     return {
-      id: UUIDV4(),
       'type': 'line',
       'source': this.getGeoJSON(),
       'layout': {},
