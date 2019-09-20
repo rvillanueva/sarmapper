@@ -1,9 +1,12 @@
-import mapbox from 'mapbox-gl';
+import mapboxgl from 'mapbox-gl';
 import config from '../config/env';
 import UUIDV4 from 'uuid/v4';
 import LngLat from './LngLat';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
-mapbox.accessToken = config.mapboxPublicKey;
+mapboxgl.accessToken = config.mapboxPublicKey;
 
 export default class Map {
   constructor() {
@@ -33,13 +36,17 @@ export default class Map {
     });
   }
   load = (containerId, lngLat) => {
-    this.map = new mapbox.Map({
+    this.map = new mapboxgl.Map({
       container: containerId,
       style: 'mapbox://styles/mapbox/outdoors-v11',
       center: new LngLat(lngLat).toJSON(),
       zoom: 10
     });
-    this.map.addControl(new mapbox.NavigationControl());
+    this.map.addControl(new mapboxgl.NavigationControl(), 'top-left');
+    this.map.addControl(new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl
+    }));
     this.map.on('style.load', () => this.handleEvt('load'));
     this.map.on('move', evt => this.handleEvt('move', evt));
   }
@@ -48,7 +55,7 @@ export default class Map {
     const el = document.createElement('div');
     el.className = 'ipp-marker';
     const id = UUIDV4();
-    const marker = new mapbox.Marker({
+    const marker = new mapboxgl.Marker({
       id,
       draggable: true,
       element: el

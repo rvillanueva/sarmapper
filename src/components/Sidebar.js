@@ -83,7 +83,7 @@ export default class Sidebar extends React.Component {
         : null;
       const centerIPPButton = !ippCoordinates
         ? <button onClick={() => setIPP()}>Add</button>
-        : <button onClick={() => setIPP()}>Reset</button>;
+        : <button onClick={() => setIPP()}>Set Here</button>;
       const goToButton = ippCoordinates
         ? <button onClick={() => centerOnIPP()}>Go To IPP</button>
         : null;
