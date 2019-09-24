@@ -110,6 +110,8 @@ export default class Sidebar extends React.Component {
                />
                <br />
                <BehaviorStats behavior={this.props.behavior}/>
+               <button onClick={() => this.props.addDispersion()}>Add Dispersion</button>
+               <button onClick={() => this.props.clearDispersion()}>Clear Dispersion</button>
                <button onClick={downloadGPX}>Download GPX</button>
             </div>
           </div>

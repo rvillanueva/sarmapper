@@ -17,7 +17,11 @@ export class Behavior {
       if(filtered.length === 0 || remainingHierarchy.length === 1) return dispersions[0];
       return filterUsingHierarchy(filtered, remainingHierarchy.slice(1));
     }
-    return filterUsingHierarchy(dispersionData, this.hierarchy);
+    const dispersion = filterUsingHierarchy(dispersionData, this.hierarchy);
+    return {
+      ...dispersion,
+      angles: [dispersion.angles.p25, dispersion.angles.p50, dispersion.angles.p75, dispersion.angles.p95]
+    }
   }
   getName() {
     return `${this._id}`;

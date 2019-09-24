@@ -53,7 +53,16 @@ export default class Map {
   addMarker = (type, lngLat) => {
     lngLat = new LngLat(lngLat);
     const el = document.createElement('div');
-    el.className = 'ipp-marker';
+    switch(type) {
+    case 'ipp':
+      el.className = 'ipp-marker';
+      break;
+    case 'directionOfTravel':
+      el.className= 'direction-marker';
+      break;
+    default:
+      el.className = 'marker';
+    }
     const id = UUIDV4();
     const marker = new mapboxgl.Marker({
       id,

@@ -19,6 +19,7 @@ export default class App extends React.Component {
     this.state = {
       behavior: behavior.toJSON(),
       mapCenter: startingPoint,
+      directionPoint: null,
       ipp: startingPoint
     };
   }
@@ -31,13 +32,32 @@ export default class App extends React.Component {
     }
   }
   downloadGPX = () => {
-    const behavior = this.profiler.getBehavior(this.state.behaviorKeys);
-    const ipp = new InitialPlanningPoint(this.state.ipp, behavior)
+    const ipp = new InitialPlanningPoint(this.state.ipp, this.state.behavior);
     this.downloader.downloadGPXFromRangeRings(ipp.getRangeRings());
+  }
+  addDispersion = lngLat => {
+    if(!lngLat) {
+      lngLat = new LngLat(this.state.ipp).moveTo(0, 2000);
+    } else {
+      lngLat = new LngLat(lngLat);
+    }
+    this.setState({
+      directionPoint: lngLat.toJSON()
+    })
+  }
+  clearDispersion = () => {
+    this.setState({
+      directionPoint: null
+    });
   }
   updateMapCenter = lngLat => {
     this.setState({
       mapCenter: new LngLat(lngLat).toJSON()
+    })
+  }
+  updateDirectionPoint = lngLat => {
+    this.setState({
+      directionPoint: new LngLat(lngLat).toJSON()
     })
   }
   setIPP = (lngLat, flyTo) => {
@@ -74,6 +94,8 @@ export default class App extends React.Component {
           ippCoordinates={this.state.ipp}
           centerOnIPP={this.centerOnIPP}
           downloadGPX={this.downloadGPX}
+          addDispersion={this.addDispersion}
+          clearDispersion={this.clearDispersion}
         />
         <div className="map-container">
           <SearchMap
@@ -83,6 +105,8 @@ export default class App extends React.Component {
             behavior={this.state.behavior}
             updateMapCenter={this.updateMapCenter}
             mapCenter={this.state.mapCenter}
+            directionPoint={this.state.directionPoint}
+            updateDirectionPoint={this.updateDirectionPoint}
           />
         </div>
       </div>

@@ -4,18 +4,19 @@ export default function BehaviorStats({
   behavior
 }) {
   return <div>
-    <strong>Distances</strong>
-    <br />
+    <h2>Distances</h2>
     Sample Size: {behavior.n}
     <br /><br/>
-    <strong>Dispersion</strong><br/>
+    <h2>Dispersion</h2>
     Sample Size: {behavior.dispersion.n}<br />
-    25%: {behavior.dispersion.angles.p25}&deg;
+    {behavior.dispersion.isAggregation ? 'Is Aggregation' : null}
     <br />
-    50%: {behavior.dispersion.angles.p50}&deg;
+    25%: {behavior.dispersion.angles[0]}&deg;
     <br />
-    75%: {behavior.dispersion.angles.p75}&deg;
+    50%: {behavior.dispersion.angles[1]}&deg;
+    <br />
+    75%: {behavior.dispersion.angles[2]}&deg;
     <br/>
-    95%: {behavior.dispersion.angles.p95}&deg;
+    95%: {behavior.dispersion.angles[3]}&deg;
   </div>;
 }

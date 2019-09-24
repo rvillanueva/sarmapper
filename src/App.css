@@ -30,6 +30,19 @@ body, html, #root {
   cursor: pointer;
   background-color: rgb(235, 100, 100);
 }
+.direction-marker {
+  height: 12px;
+  width: 12px;
+  background-color: rgb(215, 134, 59);
+  border: 2px solid white;
+  border-radius: 50%;
+  box-shadow: 0px 2px 4px 1px rgba(79, 79, 79, 0.4);
+}
+.direction-marker:hover {
+  cursor: pointer;
+  background-color: rgb(227, 141, 141);
+}
+
 .sidebar__wrapper {
   width: 290px;
   max-width: 30%;
@@ -38,17 +51,17 @@ body, html, #root {
 }
 .sidebar__content {
   padding: 24px;
+  color: rgb(79, 79, 79);
+  font-size: 14px;
 }
 .title {
   font-size: 24px;
-  color: rgb(79, 79, 79);
   margin-top: 0;
   margin-bottom: 24px;
 }
 h2 {
   margin: 0;
   font-size: 12px;
-  color: rgb(79, 79, 79);
   text-transform: uppercase;
   margin-bottom: 4px;
 }
