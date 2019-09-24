@@ -9,6 +9,7 @@ export default class DirectionPoint {
   }
   getDispersionCollectionLayer = (ippLngLat, behavior) => {
     behavior = new Behavior(behavior);
+    ippLngLat = new LngLat(ippLngLat)
     const {angles} =  behavior.getDispersion();
     const dist = behavior.getDistanceProbabilities()[3].value;
     const baseAngle = this.lngLat.getBearingTo(ippLngLat);

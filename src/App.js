@@ -3,8 +3,9 @@ import './App.css';
 import SearchMap from './components/SearchMap';
 import Sidebar from './components/Sidebar';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import BehaviorProfiles from './services/Behaviors';
+import BehaviorProfiles, {Behavior} from './services/Behaviors';
 import InitialPlanningPoint from './services/InitialPlanningPoint';
+import DirectionPoint from './services/DirectionPoint';
 import Downloader from './services/Downloader';
 import LngLat from './services/LngLat';
 
@@ -33,7 +34,17 @@ export default class App extends React.Component {
   }
   downloadGPX = () => {
     const ipp = new InitialPlanningPoint(this.state.ipp, this.state.behavior);
-    this.downloader.downloadGPXFromRangeRings(ipp.getRangeRings());
+    const directionPoint = this.state.directionPoint ? new DirectionPoint(this.state.directionPoint, this.state.behavior) : null;
+    let features = ipp.getRangeRingCollectionLayer().source.data.features;
+    if(directionPoint) {
+      features = features.concat(directionPoint.getDispersionCollectionLayer(ipp.getLngLat(), new Behavior(this.state.behavior)).source.data.features);
+      features = features.concat(directionPoint.getDirectionLineLayer(ipp.getLngLat()).source.data);
+    }
+    const geoJSON = {
+      "type": "FeatureCollection",
+      "features": features
+    }
+    this.downloader.downloadGPX(geoJSON);
   }
   addDispersion = lngLat => {
     if(!lngLat) {

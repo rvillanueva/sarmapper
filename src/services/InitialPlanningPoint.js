@@ -8,7 +8,7 @@ export default class InitialPlanningPoint {
     this.behavior = new Behavior(behavior);
   }
   getLngLat() {
-    return this.lngLat;
+    return new LngLat(this.lngLat);
   }
   setLngLat(lngLat) {
     this.lngLat = new LngLat(lngLat);
