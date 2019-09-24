@@ -114,6 +114,15 @@ export default class Sidebar extends React.Component {
                <button onClick={() => this.props.clearDispersion()}>Clear Dispersion</button>
                <button onClick={downloadGPX}>Download GPX</button>
             </div>
+            <br />
+            <br />
+            <div className="bylines">
+              <span id="byline">Data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester. </span>
+              Interface and visualization designed by <a href="mailto:ryanvill@gmail.com">Ryan Villanueva</a>.
+              <div className="disclaimer">
+                The Lost Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.
+              </div>
+            </div>
           </div>
         </div>
       );

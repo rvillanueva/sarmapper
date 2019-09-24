@@ -3,6 +3,7 @@ body, html, #root {
   width: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
 }
 .app {
   height: 100%;
@@ -48,6 +49,9 @@ body, html, #root {
   max-width: 30%;
   height: 100%;
   background-color: white;
+  max-height: 100%;
+  overflow-y: scroll;
+
 }
 .sidebar__content {
   padding: 24px;
@@ -77,4 +81,11 @@ h2 {
 }
 .behavior-selector__dropdown {
   flex: 1;
+}
+.bylines {
+  font-size: 10px;
+}
+.disclaimer {
+  font-size: 10px;
+  margin-top: 6px;
 }
