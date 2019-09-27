@@ -1,36 +1,21 @@
 import React from 'react';
 import './App.css';
-import SearchMap from './components/SearchMap';
 import Sidebar from './components/Sidebar';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import BehaviorProfiles, {Behavior} from './services/Behaviors';
+import {Behavior} from './services/Behaviors';
 import InitialPlanningPoint from './services/InitialPlanningPoint';
 import DirectionPoint from './services/DirectionPoint';
-import Downloader from './services/Downloader';
-import LngLat from './services/LngLat';
+import map from './store/searchMap';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {setBehavior} from './actions/behaviorActions';
+import {downloadGPX} from './actions/downloadActions';
 
-export default class App extends React.Component {
-  constructor(props) {
-    super(props);
-    const startingPoint = [-119.348739, 37.775754];
-    this.profiler = new BehaviorProfiles();
-    this.downloader = new Downloader();
-    this.mapRef = null;
-    const behavior = this.profiler.getClosestBehaviorByHierarchy(['hiker', 'temperate', 'mtn']);
-    this.state = {
-      behavior: behavior.toJSON(),
-      mapCenter: startingPoint,
-      directionPoint: null,
-      ipp: startingPoint
-    };
-  }
-  onBehaviorSelectionChange = keys => {
-    const behavior = this.profiler.getClosestBehaviorByHierarchy(keys);
-    if(behavior) {
-      this.setState({
-        behavior,
-      });
-    }
+
+class App extends React.Component {
+  componentDidMount() {
+    this.props.setBehavior(['hiker', 'temperate', 'mtn'])
+    map.load('map', {lat:  37.775754, lng: -119.348739});
   }
   downloadGPX = () => {
     const ipp = new InitialPlanningPoint(this.state.ipp, this.state.behavior);
@@ -44,83 +29,34 @@ export default class App extends React.Component {
       "type": "FeatureCollection",
       "features": features
     }
-    this.downloader.downloadGPX(geoJSON);
-  }
-  addDispersion = lngLat => {
-    if(!lngLat) {
-      lngLat = new LngLat(this.state.ipp).moveTo(0, 2000);
-    } else {
-      lngLat = new LngLat(lngLat);
-    }
-    this.setState({
-      directionPoint: lngLat.toJSON()
-    })
-  }
-  clearDispersion = () => {
-    this.setState({
-      directionPoint: null
-    });
-  }
-  updateMapCenter = lngLat => {
-    this.setState({
-      mapCenter: new LngLat(lngLat).toJSON()
-    })
-  }
-  updateDirectionPoint = lngLat => {
-    this.setState({
-      directionPoint: new LngLat(lngLat).toJSON()
-    })
-  }
-  setIPP = (lngLat, flyTo) => {
-    if(!lngLat) {
-      lngLat = new LngLat(this.state.mapCenter);
-    } else {
-      lngLat = new LngLat(lngLat);
-    }
-    if(flyTo) {
-      this.mapRef.moveTo(lngLat);
-    }
-    this.setState({
-      ipp: lngLat.toJSON(),
-      mapCenter: lngLat.toJSON()
-    });
-  }
-  centerOnIPP = () => {
-    this.mapRef.moveTo(this.state.ipp);
-  }
-  clearIPP = () => {
-    this.setState({
-      ipp: null
-    })
+    this.props.downloadGPX(geoJSON);
   }
   render() {
     return (
       <div className="app">
         <Sidebar
-          behavior={this.state.behavior}
-          onBehaviorChange={this.onBehaviorSelectionChange}
-          profiles={this.profiler.getProfiles()}
-          setIPP={this.setIPP}
-          clearIPP={this.clearIPP}
-          ippCoordinates={this.state.ipp}
-          centerOnIPP={this.centerOnIPP}
-          downloadGPX={this.downloadGPX}
-          addDispersion={this.addDispersion}
-          clearDispersion={this.clearDispersion}
         />
         <div className="map-container">
-          <SearchMap
-            setMapRef={ref => {this.mapRef = ref}}
-            ipp={this.state.ipp}
-            setIPP={this.setIPP}
-            behavior={this.state.behavior}
-            updateMapCenter={this.updateMapCenter}
-            mapCenter={this.state.mapCenter}
-            directionPoint={this.state.directionPoint}
-            updateDirectionPoint={this.updateDirectionPoint}
-          />
+          <div id="map" />;
         </div>
       </div>
     );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    setBehavior: bindActionCreators(setBehavior, dispatch),
+    downloadGPX: bindActionCreators(downloadGPX, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

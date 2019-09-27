@@ -25,6 +25,7 @@ export default class InitialPlanningPoint {
     const rings = this.getRangeRings();
     const ringFeatures = rings.map(ring => ring.getGeoJSON().data);
     return {
+      'id': 'rings',
       'type': 'line',
       'source': {
         type: 'geojson',

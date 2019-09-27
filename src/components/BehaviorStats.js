@@ -8,8 +8,7 @@ export default function BehaviorStats({
     Sample Size: {behavior.n}
     <br /><br/>
     <h2>Dispersion</h2>
-    Sample Size: {behavior.dispersion.n}<br />
-    {behavior.dispersion.isAggregation ? 'Is Aggregation' : null}
+    Sample Size: {behavior.dispersion.n}
     <br />
     25%: {behavior.dispersion.angles[0]}&deg;
     <br />

@@ -1,11 +1,11 @@
 import React from 'react';
 import {names} from '../data/behaviors';
 
-function BehaviorSelector({profiles, behavior, onBehaviorChange}) {
+function BehaviorSelector({profiles, behavior, setBehavior}) {
   function handleChange(l, value) {
     const newKeys = behavior.hierarchy.concat();
     newKeys[l] = value;
-    onBehaviorChange(newKeys);
+    setBehavior(newKeys);
   }
   const levels = ['profiles', 'environments', 'terrain'];
   const levelNames = {

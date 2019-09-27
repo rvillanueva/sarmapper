@@ -2,6 +2,12 @@ import React from 'react';
 import ProfileSelector from './ProfileSelector';
 import LngLat from '../services/LngLat';
 import BehaviorStats from './BehaviorStats';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {flyTo} from '../actions/mapActions';
+import {setBehavior} from '../actions/behaviorActions';
+import {setIPPMarker, clearIPPMarker, setDirectionMarker, clearDirectionMarker} from '../actions/markerActions';
+import BehaviorProfiler from '../services/Behaviors';
 
 function parseLatLngString(str) {
   const split = str.split(',');
@@ -23,7 +29,7 @@ function coordinatesToString(coords) {
   return `${roundToPrecision(coords.lat, 6)}, ${roundToPrecision(coords.lng, 6)}`;
 }
 
-export default class Sidebar extends React.Component {
+class Sidebar extends React.Component {
   constructor() {
     super();
     this.state = {
@@ -33,13 +39,13 @@ export default class Sidebar extends React.Component {
   }
   componentDidMount() {
     this.setState({
-      ippInput: coordinatesToString(this.props.ippCoordinates)
+      ippInput: this.props.ipp ? coordinatesToString(this.props.ipp.lngLat) : ''
     })
   }
   componentDidUpdate(prevProps) {
-    if(prevProps.ippCoordinates !== this.props.ippCoordinates && this.props.ippCoordinates) {
+    if(prevProps.ipp !== this.props.ipp && this.props.ipp) {
       this.setState({
-        ippInput: coordinatesToString(this.props.ippCoordinates),
+        ippInput: coordinatesToString(this.props.ipp.lngLat),
         ippInputIsDirty: false
       })
     }
@@ -50,42 +56,43 @@ export default class Sidebar extends React.Component {
       ippInputIsDirty: true
     })
   }
-  setIPP = () => {
-    const latLng = parseLatLngString(this.state.ippInput);
-    if(latLng) {
-      this.props.setIPP(latLng, true);
-    } else {
-      this.setState({
-        ippInput: coordinatesToString(this.props.ippCoordinates),
-        ippInputIsDirty: false
-      })
+  setIPPFromInput = () => {
+    const lngLat = parseLatLngString(this.state.ippInput);
+    this.setIPP(lngLat);
+  }
+  setIPP = lngLat => {
+    if(lngLat) {
+      this.props.setIPPMarker(lngLat);
     }
+  }
+  addDirectionMarker(lngLat) {
+    if(!lngLat) {
+      lngLat = new LngLat(this.props.mapCenter).moveTo(0, 2000);
+    } else {
+      lngLat = new LngLat(lngLat);
+    }
+    this.props.setDirectionMarker(lngLat);
   }
   render() {
     const {
-      profiles,
-      setIPP,
-      clearIPP,
-      onBehaviorChange,
-      downloadGPX,
-      ippCoordinates,
-      centerOnIPP
+      downloadGPX
     } = this.props;
-      const clearIPPButton = ippCoordinates
+    const profiles = new BehaviorProfiler().getProfiles();
+      const clearIPPButton = this.props.ipp
         ?
-          <button onClick={() => clearIPP()}>Clear</button>
+          <button onClick={() => this.props.clearIPPMarker()}>Clear</button>
         : null;
-      const ippCoordinateInput = ippCoordinates
+      const ippCoordinateInput = this.props.ipp
         ? <input value={this.state.ippInput} onChange={evt => this.setDirtyIPPCoordinateString(evt.target.value)}/>
         : null;
       const setNewIPPButton = this.state.ippInputIsDirty
-        ? <button onClick={this.setIPP}>Update</button>
+        ? <button onClick={this.setIPPFromInput}>Update</button>
         : null;
-      const centerIPPButton = !ippCoordinates
-        ? <button onClick={() => setIPP()}>Add</button>
-        : <button onClick={() => setIPP()}>Set Here</button>;
-      const goToButton = ippCoordinates
-        ? <button onClick={() => centerOnIPP()}>Go To IPP</button>
+      const centerIPPButton = !this.props.ipp
+        ? <button onClick={() => this.setIPP(this.props.mapCenter)}>Add</button>
+        : <button onClick={() => this.setIPP(this.props.mapCenter)}>Set Here</button>;
+      const goToButton = this.props.ipp
+        ? <button onClick={() => this.props.flyTo(this.props.ipp.lngLat)}>Go To IPP</button>
         : null;
       return (
         <div className="sidebar__wrapper">
@@ -100,18 +107,24 @@ export default class Sidebar extends React.Component {
               {clearIPPButton}
             </div>
             <br />
+            <div>
+              <h2>Direction of Travel</h2>
+              {
+                this.props.direction
+                ? <button onClick={() => this.props.clearDirectionMarker()}>Clear</button>
+                : <button onClick={() => this.addDirectionMarker()}>Add</button>
+              }
+            </div>
             <br />
             <div>
             <h2>Behavior Range Rings</h2>
-              <ProfileSelector
+              {this.props.behavior ? <ProfileSelector
                 profiles={profiles}
                 behavior={this.props.behavior}
-                onBehaviorChange={onBehaviorChange}
-               />
+                setBehavior={this.props.setBehavior}
+               /> : null}
                <br />
-               <BehaviorStats behavior={this.props.behavior}/>
-               <button onClick={() => this.props.addDispersion()}>Add Dispersion</button>
-               <button onClick={() => this.props.clearDispersion()}>Clear Dispersion</button>
+               {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
                <button onClick={downloadGPX}>Download GPX</button>
             </div>
             <br />
@@ -128,3 +141,28 @@ export default class Sidebar extends React.Component {
       );
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    mapCenter: state.map.center,
+    ipp: state.markers.byId.ipp,
+    direction: state.markers.byId.direction,
+    behavior: state.behavior
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return {
+    flyTo: bindActionCreators(flyTo, dispatch),
+    setIPPMarker: bindActionCreators(setIPPMarker, dispatch),
+    clearIPPMarker: bindActionCreators(clearIPPMarker, dispatch),
+    setDirectionMarker: bindActionCreators(setDirectionMarker, dispatch),
+    clearDirectionMarker: bindActionCreators(clearDirectionMarker, dispatch),
+    setBehavior: bindActionCreators(setBehavior, dispatch)
+  };
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sidebar);

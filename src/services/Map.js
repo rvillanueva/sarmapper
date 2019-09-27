@@ -8,7 +8,7 @@ import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 mapboxgl.accessToken = config.mapboxPublicKey;
 
-export default class Map {
+export class Map {
   constructor() {
     this.map = null;
     this.emitter = null;
@@ -117,3 +117,7 @@ export default class Map {
     return this.map.getCenter();
   }
 }
+
+const map = new Map();
+
+export default map;
