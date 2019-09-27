@@ -117,15 +117,22 @@ class Sidebar extends React.Component {
             </div>
             <br />
             <div>
-            <h2>Behavior Range Rings</h2>
+              <h2>Behavior Range Rings</h2>
               {this.props.behavior ? <ProfileSelector
                 profiles={profiles}
                 behavior={this.props.behavior}
                 setBehavior={this.props.setBehavior}
                /> : null}
-               <br />
-               {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
-               <button onClick={downloadGPX}>Download GPX</button>
+            </div>
+            <br />
+            <div>
+              <h2>Behavior Stats</h2>
+              {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
+            </div>
+            <br />
+            <div>
+              <h2>Export</h2>
+              <button onClick={downloadGPX}>Download GPX</button>
             </div>
             <br />
             <br />
