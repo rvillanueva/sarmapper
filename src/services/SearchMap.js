@@ -7,6 +7,9 @@ import store from '../store';
 import {updateMapCenter} from '../actions/mapActions';
 import {setIPPMarker, setDirectionMarker, clearDirectionMarker} from '../actions/markerActions';
 import UUIDV4 from 'uuid/v4';
+import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
+import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 
 const {dispatch} = store;
 mapboxgl.accessToken = config.mapboxPublicKey;
@@ -30,6 +33,11 @@ export default class SearchMap {
       center: new LngLat(lngLat).toJSON(),
       zoom: 10
     });
+    this.map.addControl(new mapboxgl.NavigationControl(), 'top-left');
+    this.map.addControl(new MapboxGeocoder({
+      accessToken: mapboxgl.accessToken,
+      mapboxgl: mapboxgl
+    }));
     this.map.on('load', () => {
       dispatch(setIPPMarker(this.map.getCenter()))
     });
