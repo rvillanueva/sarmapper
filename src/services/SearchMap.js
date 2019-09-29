@@ -1,34 +1,29 @@
 import mapboxgl from 'mapbox-gl';
 import config from '../config/env';
 import LngLat from '../services/LngLat';
-import DirectionPoint from '../services/DirectionPoint';
-import InitialPlanningPoint from '../services/InitialPlanningPoint';
-import store from '../store';
+import InitialPlanningMarker from '../services/InitialPlanningMarker';
+import DestinationMarker from '../services/DestinationMarker';
+import {updateIPPMarker, updateDestinationMarker} from '../actions/markerActions';
 import {updateMapCenter} from '../actions/mapActions';
-import {setIPPMarker, setDirectionMarker, clearDirectionMarker} from '../actions/markerActions';
-import UUIDV4 from 'uuid/v4';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
+import StatisticsVirtualLayer from './StatisticsVirtualLayer';
 
-const {dispatch} = store;
 mapboxgl.accessToken = config.mapboxPublicKey;
 
 export default class SearchMap {
   constructor() {
-    this.map = null
-
-    this.ipp = null;
-    this.direction = null;
-
-    this.rings = null;
-    this.labels = null;
-    this.dispersionLines = null;
-    this.directionLine = null;
+    this.map = null;
+    this.statsLayer = new StatisticsVirtualLayer();
+    this.markers = {
+      ipp: null,
+      destination: null
+    }
   }
-  load(containerId, lngLat) {
+  load(lngLat) {
     this.map = new mapboxgl.Map({
-      container: containerId,
+      container: 'map',
       style: 'mapbox://styles/mapbox/outdoors-v11',
       center: new LngLat(lngLat).toJSON(),
       zoom: 10
@@ -38,142 +33,68 @@ export default class SearchMap {
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl
     }));
-    this.map.on('load', () => {
-      dispatch(setIPPMarker(this.map.getCenter()))
-    });
-    this.map.on('move', evt => dispatch(updateMapCenter(this.map.getCenter())));
-
+    this.statsLayer.addTo(this.map);
   }
   setIPPMarker = lngLat => {
     lngLat = new LngLat(lngLat);
-    if(this.ipp) {
-      this.ipp.setLngLat(lngLat.toJSON());
+    if(this.markers.ipp) {
+      this.markers.ipp.setLngLat(lngLat.toJSON());
     } else {
-      const el = document.createElement('div');
-      el.className = 'ipp-marker';
-      this.ipp = new mapboxgl.Marker({
+      this.markers.ipp = new InitialPlanningMarker({
         id: 'ipp',
-        draggable: true,
-        element: el
+        className: 'ipp-marker',
+        draggable: true
+      })
+      this.markers.ipp.setLngLat(lngLat.toJSON());
+      this.markers.ipp.addTo(this.map);
+      this.statsLayer.applyIPPMarkerListeners(this.markers.destination);
+      this.markers.ipp.on('dragstart', () => {
+        updateIPPMarker(this.markers.ipp);
       });
-      this.ipp.setLngLat(lngLat.toJSON());
-      this.ipp.addTo(this.map)
-      this.ipp.on('dragstart', () => {
-        this.clearRings();
-        this.clearDispersion();
-      });
-      this.ipp.on('dragend', (evt) => {
-        const lngLat = this.ipp.getLngLat()
-        setIPPMarker(lngLat);
-        this.drawRings();
-        this.drawDispersion();
+      this.markers.ipp.on('dragend', () => {
+        updateIPPMarker(this.markers.ipp);
       });
     }
-    this.drawRings();
-    this.drawDispersion();
+    updateIPPMarker(this.markers.ipp);
   }
-  clearIPP = () => {
-    if(this.ipp) this.ipp.remove();
-    this.ipp = null;
-    this.clearRings();
+  clearIPPMarker = () => {
+    if(this.markers.ipp) this.markers.ipp.remove();
+    this.markers.ipp = null;
   }
   flyTo = lngLat => {
     lngLat = new LngLat(lngLat);
     this.map.flyTo(lngLat.toJSON());
+    updateMapCenter(lngLat.toJSON());
   }
-  setDirectionMarker(lngLat) {
+  setDestinationMarker(lngLat) {
     lngLat = new LngLat(lngLat);
-    if(this.direction) {
-      this.direction.setLngLat(lngLat.toJSON());
+    if(this.markers.destination) {
+      this.markers.destination.setLngLat(lngLat.toJSON());
     } else {
-      const el = document.createElement('div');
-      el.className = 'direction-marker';
-      this.direction = new mapboxgl.Marker({
-        id: 'direction',
-        draggable: true,
-        element: el
+      this.markers.destination = new DestinationMarker({
+        id: 'destination',
+        className: 'destinationMarker',
+        draggable: true
       });
-      this.direction.setLngLat(lngLat.toJSON());
-      this.direction.addTo(this.map)
-      this.direction.on('dragstart', () => {
+      this.markers.destination.setLngLat(lngLat.toJSON());
+      this.markers.destination.addTo(this.map);
+      this.statsLayer.applyDestinationMarkerListeners(this.markers.destination);
+      this.markers.destination.on('dragstart', () => {
         this.clearDispersion();
       });
-      this.direction.on('dragend', (evt) => {
-        setDirectionMarker(lngLat);
-        this.drawDispersion();
+      this.markers.destination.on('dragend', (evt) => {
+        const lngLat = new LngLat(this.markers.destination.getLngLat());
+        updateDestinationMarker(lngLat);
       });
     }
+    updateDestinationMarker(this.markers.destination);
     this.drawDispersion();
   }
-  setBehavior = behavior => {
-    this.behavior = behavior;
-    this.drawRings();
-    this.drawDispersion();
-  }
-  addLayer(layer) {
-    if(!layer.id) layer.id = UUIDV4();
-    return {
-      layer: this.map.addLayer(layer),
-      remove: () => this.removeLayer(layer.id)
+  clearDestinationMarker() {
+    if(this.markers.destination) {
+      this.markers.destination.remove();
     }
-  }
-  removeLayer(id) {
-    this.map.removeLayer(id);
-    this.map.removeSource(id);
-  }
-  clearRings() {
-    if(this.rings) {
-      this.rings.remove();
-      this.rings = null;
-    }
-    if(this.labels) {
-      this.labels.remove();
-      this.labels = null;
-    }
-  }
-  clearDispersion = () => {
-    if(this.dispersion) {
-      this.dispersion.remove();
-      this.dispersion = null;
-    }
-    if(this.directionLine) {
-      this.directionLine.remove();
-      this.directionLine = null;
-    }
-  }
-  clearDirectionMarker = () => {
-    this.clearDispersion();
-    if(this.direction) {
-      this.direction.remove();
-      this.direction = null;
-    }
-  }
-  clearIPPMarker = () => {
-    this.clearRings();
-    clearDirectionMarker();
-    this.clearDispersion();
-    if(this.ipp) {
-      this.ipp.remove();
-      this.ipp = null;
-    }
-  }
-  drawRings = () => {
-    if(!this.ipp) return;
-    this.clearRings();
-    const ipp = new InitialPlanningPoint(this.ipp.getLngLat(), this.behavior);
-    const ringCollectionLayer = ipp.getRangeRingCollectionLayer();
-    const labelCollectionLayer = ipp.getLabelCollectionLayer();
-    this.rings = this.addLayer(ringCollectionLayer);
-    this.labels = this.addLayer(labelCollectionLayer);
-  }
-  drawDispersion() {
-    this.clearDispersion();
-    if(this.direction && this.ipp) {
-      const direction = new DirectionPoint(this.direction.getLngLat());
-      const dispersionCollectionLayer = direction.getDispersionCollectionLayer(this.ipp.getLngLat(), this.behavior);
-      const directionLineLayer = direction.getDirectionLineLayer(this.ipp.getLngLat());
-      this.dispersion = this.addLayer(dispersionCollectionLayer);
-      this.directionLine = this.addLayer(directionLineLayer);
-    }
+    this.markers.destination = null;
+    updateDestinationMarker(null);
   }
 }
