@@ -1,4 +1,9 @@
-import StatisticsStyleLayerFactory from './StatisticsStyleLayerFactory';
+import {
+  createRingsLayer,
+  createRingLabelsLayer,
+  createDispersionLinesLayer,
+  createDirectionLineLayer
+} from './statisticsStyleLayers';
 
 export default class StatisticsVirtualLayer {
   constructor() {
@@ -9,7 +14,9 @@ export default class StatisticsVirtualLayer {
       dispersionLines: null,
       directionLine: null
     }
-    this.styleLayerFactory = new StatisticsStyleLayerFactory();
+    this.behavior = null;
+    this.ipp = null;
+    this.destination = null;
   }
   addTo(map) {
     this.map = map;
@@ -17,17 +24,19 @@ export default class StatisticsVirtualLayer {
   applyIPPMarkerListeners(ipp) {
     if(!this.map) return null;
     ipp.on('dragend', evt => {
-      this.drawRings(ipp);
-      this.drawDispersion(ipp);
+      this.drawRings();
+      this.drawDispersion();
     })
+    this.ipp = ipp;
   }
   applyDestinationMarkerListeners(destination) {
     destination.on('dragend', evt => {
-      this.drawRings(destination);
-      this.drawDispersion(destination);
+      this.drawRings();
+      this.drawDispersion();
     })
+    this.destination = destination;
   }
-  handleBehaviorChange(behavior) {
+  setBehavior(behavior) {
     this.behavior = behavior;
   }
   clearRings() {
@@ -43,28 +52,29 @@ export default class StatisticsVirtualLayer {
   }
   clearDispersion = () => {
     if(!this.map) return null;
-    if(this.markers.dispersion) {
-      this.markers.dispersion.remove();
-      this.markers.dispersion = null;
+    if(this.layers.dispersionLines) {
+      this.layers.dispersionLines.remove();
+      this.layers.dispersionLines = null;
     }
     if(this.layers.directionLine) {
       this.layers.directionLine.remove();
       this.layers.directionLine = null;
     }
   }
-  drawRings = (ipp, behavior) => {
+  drawRings = () => {
     if(!this.map) return null;
+    if(!this.ipp) return null;
     this.clearRings();
-    this.layers.rings = this.styleLayerFactory.createRingsLayer(ipp, behavior);
-    this.layers.labels = this.styleLayerFactory.createLabelsLayer(ipp, behavior);
+    this.layers.rings = createRingsLayer(this.ipp, this.behavior);
+    this.layers.labels = createRingLabelsLayer(this.ipp, this.behavior);
     this.layers.rings.addTo(this.map);
     this.layers.labels.addTo(this.map);
   }
-  drawDispersion(ipp, destination, behavior) {
+  drawDispersion() {
     if(!this.map) return null;
     this.clearDispersion();
-    this.layers.dispersionLines = this.styleLayerFactory.createDispersionLinesLayer(ipp.getLngLat(), behavior);
-    this.layers.directionLine = this.styleLayerFactory.createDirectionLineLayer(ipp, destination);
+    this.layers.dispersionLines = createDispersionLinesLayer(this.ipp.getLngLat(), this.behavior);
+    this.layers.directionLine = createDirectionLineLayer(this.ipp, this.destination);
     this.layers.dispersionLines.addTo(this.map);
     this.layers.directionLine.addTo(this.map);
   }

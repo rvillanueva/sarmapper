@@ -2,34 +2,27 @@ import React from 'react';
 import './App.css';
 import Sidebar from './components/Sidebar';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import {Behavior} from './services/Behaviors';
-import InitialPlanningPoint from './services/InitialPlanningPoint';
-import DirectionPoint from './services/DirectionPoint';
-import map from './store/searchMap';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {setBehavior} from './actions/behaviorActions';
 import {downloadGPX} from './actions/downloadActions';
-
+import searchMap from './store/searchMap';
+import BehaviorProfiles from './services/behavior/BehaviorProfiles';
 
 class App extends React.Component {
+  constructor() {
+    super();
+    this.profiles = new BehaviorProfiles();
+  }
   componentDidMount() {
-    this.props.setBehavior(['hiker', 'temperate', 'mtn'])
-    map.load('map', {lat:  37.775754, lng: -119.348739});
+    const behavior = this.profiles.getClosestBehaviorByHierarchy(['hiker', 'temperate', 'mtn']);
+    const startPoint = {lat:  37.775754, lng: -119.348739};
+    searchMap.setBehavior(behavior);
+    searchMap.on('load', () => searchMap.setIPPMarker(startPoint));
+    searchMap.load('map', startPoint);
   }
   downloadGPX = () => {
-    const ipp = new InitialPlanningPoint(this.state.ipp, this.state.behavior);
-    const directionPoint = this.state.directionPoint ? new DirectionPoint(this.state.directionPoint, this.state.behavior) : null;
-    let features = ipp.getRangeRingCollectionLayer().source.data.features;
-    if(directionPoint) {
-      features = features.concat(directionPoint.getDispersionCollectionLayer(ipp.getLngLat(), new Behavior(this.state.behavior)).source.data.features);
-      features = features.concat(directionPoint.getDirectionLineLayer(ipp.getLngLat()).source.data);
-    }
-    const geoJSON = {
-      "type": "FeatureCollection",
-      "features": features
-    }
-    this.props.downloadGPX(geoJSON);
+    this.props.downloadGPX();
   }
   render() {
     return (

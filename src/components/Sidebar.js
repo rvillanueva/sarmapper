@@ -3,11 +3,8 @@ import ProfileSelector from './ProfileSelector';
 import LngLat from '../services/LngLat';
 import BehaviorStats from './BehaviorStats';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
-import {flyTo} from '../actions/mapActions';
-import {setBehavior} from '../actions/behaviorActions';
-import {setIPPMarker, clearIPPMarker, setDirectionMarker, clearDirectionMarker} from '../actions/markerActions';
-import BehaviorProfiler from '../services/Behaviors';
+import BehaviorProfiles from '../services/behavior/BehaviorProfiles';
+import searchMap from '../store/searchMap';
 
 function parseLatLngString(str) {
   const split = str.split(',');
@@ -36,6 +33,7 @@ class Sidebar extends React.Component {
       ippInput: '',
       ippInputIsDirty: false
     }
+    this.searchMap = searchMap;
   }
   componentDidMount() {
     this.setState({
@@ -58,16 +56,11 @@ class Sidebar extends React.Component {
   }
   setIPPFromInput = () => {
     const lngLat = parseLatLngString(this.state.ippInput);
-    this.setIPP(lngLat);
-  }
-  setIPP = lngLat => {
-    if(lngLat) {
-      this.props.setIPPMarker(lngLat);
-    }
+    this.searchMap.setIPP(lngLat);
   }
   addDirectionMarker(lngLat) {
     if(!lngLat) {
-      lngLat = new LngLat(this.props.mapCenter).moveTo(0, 2000);
+      lngLat = new LngLat(this.props.ipp).moveTo(0, 2000);
     } else {
       lngLat = new LngLat(lngLat);
     }
@@ -77,10 +70,10 @@ class Sidebar extends React.Component {
     const {
       downloadGPX
     } = this.props;
-    const profiles = new BehaviorProfiler().getProfiles();
+    const profiles = new BehaviorProfiles().getProfiles();
       const clearIPPButton = this.props.ipp
         ?
-          <button onClick={() => this.props.clearIPPMarker()}>Clear</button>
+          <button onClick={() => this.searchMap.clearIPPMarker()}>Clear</button>
         : null;
       const ippCoordinateInput = this.props.ipp
         ? <input value={this.state.ippInput} onChange={evt => this.setDirtyIPPCoordinateString(evt.target.value)}/>
@@ -89,10 +82,10 @@ class Sidebar extends React.Component {
         ? <button onClick={this.setIPPFromInput}>Update</button>
         : null;
       const centerIPPButton = !this.props.ipp
-        ? <button onClick={() => this.setIPP(this.props.mapCenter)}>Add</button>
-        : <button onClick={() => this.setIPP(this.props.mapCenter)}>Set Here</button>;
+        ? <button onClick={() => this.searchMap.setIPPMarker(this.props.mapCenter)}>Add</button>
+        : <button onClick={() => this.searchMap.setIPPMarker(this.props.mapCenter)}>Set Here</button>;
       const goToButton = this.props.ipp
-        ? <button onClick={() => this.props.flyTo(this.props.ipp.lngLat)}>Go To IPP</button>
+        ? <button onClick={() => this.searchMap.flyTo(this.props.ipp.lngLat)}>Go To IPP</button>
         : null;
       return (
         <div className="sidebar__wrapper">
@@ -160,12 +153,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    flyTo: bindActionCreators(flyTo, dispatch),
-    setIPPMarker: bindActionCreators(setIPPMarker, dispatch),
-    clearIPPMarker: bindActionCreators(clearIPPMarker, dispatch),
-    setDirectionMarker: bindActionCreators(setDirectionMarker, dispatch),
-    clearDirectionMarker: bindActionCreators(clearDirectionMarker, dispatch),
-    setBehavior: bindActionCreators(setBehavior, dispatch)
   };
 }
 

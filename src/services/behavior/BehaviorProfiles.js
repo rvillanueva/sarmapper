@@ -1,5 +1,5 @@
-import {profiles as profileData} from '../data/behaviors';
-import {Behavior} from './Behavior';
+import {profiles as profileData} from '../../data/behaviors';
+import Behavior from './Behavior';
 
 export default class BehaviorProfiles {
   constructor() {

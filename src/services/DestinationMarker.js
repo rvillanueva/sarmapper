@@ -4,7 +4,8 @@ export default class DestinationMarker extends MapMarker {
   getOptions() {
     return {
       id: 'destination',
-      className: 'destination-marker'
+      className: 'destination-marker',
+      draggable: true
     }
   }
 }

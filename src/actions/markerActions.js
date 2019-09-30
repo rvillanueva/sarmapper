@@ -21,7 +21,7 @@ export function clearIPPMarker(lngLat) {
   };
 }
 
-export function updateDirectionMarker(directionMarker) {
+export function updateDestinationMarker(directionMarker) {
   return function(dispatch) {
     dispatch({
       type: types.SET_DIRECTION_MARKER,

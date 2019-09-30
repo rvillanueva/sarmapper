@@ -1,19 +1,22 @@
-import mapboxgl from 'mapbox-gl';
-import config from '../config/env';
+import mapboxgl from './mapboxgl';
 import LngLat from '../services/LngLat';
 import InitialPlanningMarker from '../services/InitialPlanningMarker';
 import DestinationMarker from '../services/DestinationMarker';
 import {updateIPPMarker, updateDestinationMarker} from '../actions/markerActions';
 import {updateMapCenter} from '../actions/mapActions';
+import {setBehavior} from '../actions/behaviorActions';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import StatisticsVirtualLayer from './StatisticsVirtualLayer';
+import EventEmitter from 'events';
+import store from '../store';
 
-mapboxgl.accessToken = config.mapboxPublicKey;
+const {dispatch} = store;
 
-export default class SearchMap {
+export default class SearchMap extends EventEmitter {
   constructor() {
+    super();
     this.map = null;
     this.statsLayer = new StatisticsVirtualLayer();
     this.markers = {
@@ -21,9 +24,9 @@ export default class SearchMap {
       destination: null
     }
   }
-  load(lngLat) {
+  load(containerId, lngLat) {
     this.map = new mapboxgl.Map({
-      container: 'map',
+      container: containerId,
       style: 'mapbox://styles/mapbox/outdoors-v11',
       center: new LngLat(lngLat).toJSON(),
       zoom: 10
@@ -33,6 +36,7 @@ export default class SearchMap {
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl
     }));
+    this.map.on('load', data => this.emit('load', data))
     this.statsLayer.addTo(this.map);
   }
   setIPPMarker = lngLat => {
@@ -47,12 +51,12 @@ export default class SearchMap {
       })
       this.markers.ipp.setLngLat(lngLat.toJSON());
       this.markers.ipp.addTo(this.map);
-      this.statsLayer.applyIPPMarkerListeners(this.markers.destination);
+      this.statsLayer.applyIPPMarkerListeners(this.markers.ipp);
       this.markers.ipp.on('dragstart', () => {
-        updateIPPMarker(this.markers.ipp);
+        dispatch(updateIPPMarker(this.markers.ipp));
       });
       this.markers.ipp.on('dragend', () => {
-        updateIPPMarker(this.markers.ipp);
+        dispatch(updateIPPMarker(this.markers.ipp));
       });
     }
     updateIPPMarker(this.markers.ipp);
@@ -64,7 +68,7 @@ export default class SearchMap {
   flyTo = lngLat => {
     lngLat = new LngLat(lngLat);
     this.map.flyTo(lngLat.toJSON());
-    updateMapCenter(lngLat.toJSON());
+    dispatch(updateMapCenter(lngLat.toJSON()));
   }
   setDestinationMarker(lngLat) {
     lngLat = new LngLat(lngLat);
@@ -96,5 +100,9 @@ export default class SearchMap {
     }
     this.markers.destination = null;
     updateDestinationMarker(null);
+  }
+  setBehavior(behavior) {
+    this.statsLayer.setBehavior(behavior);
+    dispatch(setBehavior(behavior));
   }
 }

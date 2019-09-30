@@ -1,4 +1,4 @@
-import {dispersions as dispersionData} from '../data/behaviors';
+import {dispersions as dispersionData} from '../../data/behaviors';
 const distanceNames = ['25%', '50%', '75%', '95%']
 
 export default class Behavior {

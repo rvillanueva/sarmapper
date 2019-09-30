@@ -1,5 +1,3 @@
-require('dotenv').load();
-
 module.exports = {
-  mapboxPublicKey: process.env.MAPBOX_PUBLIC_KEY
+  mapboxPublicKey: 'pk.eyJ1IjoicnZpbGxhbnVldmEiLCJhIjoiY2swaWZzb2Z5MGJpNDNjcThzMXRhbW1mOSJ9.cJC55P3PbrPCgQuz7u88Sg'
 }
