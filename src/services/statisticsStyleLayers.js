@@ -98,19 +98,20 @@ export function createDirectionLineLayer(ippLngLat, directionLngLat) {
     }
   })
 }
-export function createDispersionLinesLayer(ippLngLat, behavior) {
-  ippLngLat = new LngLat(ippLngLat).toJSON();
+export function createDispersionLinesLayer(ippLngLat, destinationLngLat, behavior) {
+  ippLngLat = new LngLat(ippLngLat);
+  destinationLngLat = new LngLat(destinationLngLat);
   behavior = new Behavior(behavior);
   const {angles} =  behavior.getDispersion();
   const dist = behavior.getDistanceProbabilities()[3].value;
-  const baseAngle = this.lngLat.getBearingTo(ippLngLat);
+  const baseAngle = destinationLngLat.getBearingTo(ippLngLat);
   const leftLines = angles.map(angle => ({
-    start: new LngLat(ippLngLat),
-    end: new LngLat(ippLngLat).moveTo(baseAngle + angle, dist * 1000)
+    start: ippLngLat,
+    end: ippLngLat.moveTo(baseAngle + angle, dist * 1000)
   }));
   const rightLines = angles.map(angle => ({
-    start: new LngLat(ippLngLat),
-    end: new LngLat(ippLngLat).moveTo(baseAngle - angle, dist * 1000)
+    start: ippLngLat,
+    end: ippLngLat.moveTo(baseAngle - angle, dist * 1000)
   }));
   const features = leftLines.concat(rightLines).map(line => ({
     'type': 'Feature',

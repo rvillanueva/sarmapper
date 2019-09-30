@@ -14,30 +14,9 @@ export default class StatisticsVirtualLayer {
       dispersionLines: null,
       directionLine: null
     }
-    this.behavior = null;
-    this.ipp = null;
-    this.destination = null;
   }
   addTo(map) {
     this.map = map;
-  }
-  applyIPPMarkerListeners(ipp) {
-    if(!this.map) return null;
-    ipp.on('dragend', evt => {
-      this.drawRings();
-      this.drawDispersion();
-    })
-    this.ipp = ipp;
-  }
-  applyDestinationMarkerListeners(destination) {
-    destination.on('dragend', evt => {
-      this.drawRings();
-      this.drawDispersion();
-    })
-    this.destination = destination;
-  }
-  setBehavior(behavior) {
-    this.behavior = behavior;
   }
   clearRings() {
     if(!this.map) return null;
@@ -61,20 +40,19 @@ export default class StatisticsVirtualLayer {
       this.layers.directionLine = null;
     }
   }
-  drawRings = () => {
+  drawRings = (ipp, behavior) => {
     if(!this.map) return null;
-    if(!this.ipp) return null;
     this.clearRings();
-    this.layers.rings = createRingsLayer(this.ipp, this.behavior);
-    this.layers.labels = createRingLabelsLayer(this.ipp, this.behavior);
+    this.layers.rings = createRingsLayer(ipp.getLngLat(), behavior);
+    this.layers.labels = createRingLabelsLayer(ipp.getLngLat(), behavior);
     this.layers.rings.addTo(this.map);
     this.layers.labels.addTo(this.map);
   }
-  drawDispersion() {
+  drawDispersion(ipp, destination, behavior) {
     if(!this.map) return null;
     this.clearDispersion();
-    this.layers.dispersionLines = createDispersionLinesLayer(this.ipp.getLngLat(), this.behavior);
-    this.layers.directionLine = createDirectionLineLayer(this.ipp, this.destination);
+    this.layers.dispersionLines = createDispersionLinesLayer(ipp.getLngLat(), destination.getLngLat(), behavior);
+    this.layers.directionLine = createDirectionLineLayer(ipp.getLngLat(), destination.getLngLat());
     this.layers.dispersionLines.addTo(this.map);
     this.layers.directionLine.addTo(this.map);
   }

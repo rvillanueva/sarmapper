@@ -2,8 +2,10 @@ import React from 'react';
 import ProfileSelector from './ProfileSelector';
 import LngLat from '../services/LngLat';
 import BehaviorStats from './BehaviorStats';
+import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
 import BehaviorProfiles from '../services/behavior/BehaviorProfiles';
+import {downloadGPX} from '../actions/downloadActions';
 import searchMap from '../store/searchMap';
 
 function parseLatLngString(str) {
@@ -58,13 +60,14 @@ class Sidebar extends React.Component {
     const lngLat = parseLatLngString(this.state.ippInput);
     this.searchMap.setIPP(lngLat);
   }
-  addDirectionMarker(lngLat) {
-    if(!lngLat) {
-      lngLat = new LngLat(this.props.ipp).moveTo(0, 2000);
+  addDestinationMarker() {
+    if(this.props.ipp) {
+      const lngLat = new LngLat(this.props.ipp.lngLat).moveTo(0, 2000);
+      searchMap.setDestinationMarker(lngLat);
     } else {
-      lngLat = new LngLat(lngLat);
+      const lngLat = new LngLat(this.props.mapCenter);
+      searchMap.setDestinationMarker(lngLat);
     }
-    this.props.setDirectionMarker(lngLat);
   }
   render() {
     const {
@@ -104,8 +107,8 @@ class Sidebar extends React.Component {
               <h2>Direction of Travel</h2>
               {
                 this.props.direction
-                ? <button onClick={() => this.props.clearDirectionMarker()}>Clear</button>
-                : <button onClick={() => this.addDirectionMarker()}>Add</button>
+                ? <button onClick={() => searchMap.clearDestinationMarker()}>Clear</button>
+                : <button onClick={() => this.addDestinationMarker()}>Add</button>
               }
             </div>
             <br />
@@ -114,7 +117,7 @@ class Sidebar extends React.Component {
               {this.props.behavior ? <ProfileSelector
                 profiles={profiles}
                 behavior={this.props.behavior}
-                setBehavior={this.props.setBehavior}
+                setBehaviorByKeys={this.props.setBehaviorByKeys}
                /> : null}
             </div>
             <br />
@@ -153,6 +156,7 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
+    downloadGPX: bindActionCreators(downloadGPX, dispatch)
   };
 }
 

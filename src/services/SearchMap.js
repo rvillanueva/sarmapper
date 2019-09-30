@@ -2,7 +2,7 @@ import mapboxgl from './mapboxgl';
 import LngLat from '../services/LngLat';
 import InitialPlanningMarker from '../services/InitialPlanningMarker';
 import DestinationMarker from '../services/DestinationMarker';
-import {updateIPPMarker, updateDestinationMarker} from '../actions/markerActions';
+import {updateIPPMarker, updateDestinationMarker, clearIPPMarker} from '../actions/markerActions';
 import {updateMapCenter} from '../actions/mapActions';
 import {setBehavior} from '../actions/behaviorActions';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
@@ -36,7 +36,8 @@ export default class SearchMap extends EventEmitter {
       accessToken: mapboxgl.accessToken,
       mapboxgl: mapboxgl
     }));
-    this.map.on('load', data => this.emit('load', data))
+    this.map.on('load', data => this.emit('load', data));
+    this.map.on('move', data => this.emit('move', data))
     this.statsLayer.addTo(this.map);
   }
   setIPPMarker = lngLat => {
@@ -51,24 +52,37 @@ export default class SearchMap extends EventEmitter {
       })
       this.markers.ipp.setLngLat(lngLat.toJSON());
       this.markers.ipp.addTo(this.map);
-      this.statsLayer.applyIPPMarkerListeners(this.markers.ipp);
       this.markers.ipp.on('dragstart', () => {
         dispatch(updateIPPMarker(this.markers.ipp));
+        this.statsLayer.clearRings();
+        this.statsLayer.clearDispersion();
       });
+      this.markers.ipp.on('drag', () => {
+        dispatch(updateIPPMarker(this.markers.ipp));
+      })
       this.markers.ipp.on('dragend', () => {
+        this.statsLayer.drawRings(this.markers.ipp, this.behavior);
+        if(this.markers.destination) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
         dispatch(updateIPPMarker(this.markers.ipp));
       });
     }
-    updateIPPMarker(this.markers.ipp);
+    this.statsLayer.drawRings(this.markers.ipp, this.behavior);
+    dispatch(updateIPPMarker(this.markers.ipp));
   }
   clearIPPMarker = () => {
     if(this.markers.ipp) this.markers.ipp.remove();
     this.markers.ipp = null;
+    this.statsLayer.clearRings();
+    this.statsLayer.clearDispersion();
+    dispatch(clearIPPMarker());
   }
   flyTo = lngLat => {
     lngLat = new LngLat(lngLat);
     this.map.flyTo(lngLat.toJSON());
     dispatch(updateMapCenter(lngLat.toJSON()));
+  }
+  getLngLat() {
+    if(this.map) return this.map.getCenter();
   }
   setDestinationMarker(lngLat) {
     lngLat = new LngLat(lngLat);
@@ -77,32 +91,33 @@ export default class SearchMap extends EventEmitter {
     } else {
       this.markers.destination = new DestinationMarker({
         id: 'destination',
-        className: 'destinationMarker',
+        className: 'destination-marker',
         draggable: true
       });
       this.markers.destination.setLngLat(lngLat.toJSON());
       this.markers.destination.addTo(this.map);
-      this.statsLayer.applyDestinationMarkerListeners(this.markers.destination);
       this.markers.destination.on('dragstart', () => {
-        this.clearDispersion();
+        this.statsLayer.clearDispersion();
       });
       this.markers.destination.on('dragend', (evt) => {
-        const lngLat = new LngLat(this.markers.destination.getLngLat());
-        updateDestinationMarker(lngLat);
+        if(this.markers.ipp) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
+        dispatch(updateDestinationMarker(this.markers.destination));
       });
     }
-    updateDestinationMarker(this.markers.destination);
-    this.drawDispersion();
+    dispatch(updateDestinationMarker(this.markers.destination));
+    if(this.markers.ipp) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
   }
   clearDestinationMarker() {
     if(this.markers.destination) {
       this.markers.destination.remove();
     }
     this.markers.destination = null;
-    updateDestinationMarker(null);
+    dispatch(updateDestinationMarker(null));
   }
   setBehavior(behavior) {
-    this.statsLayer.setBehavior(behavior);
+    this.behavior = behavior;
     dispatch(setBehavior(behavior));
+    if(this.markers.ipp && this.markers.destination) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
+    if(this.markers.ipp) this.statsLayer.drawRings(this.markers.ipp, this.behavior);
   }
 }

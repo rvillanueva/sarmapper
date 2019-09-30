@@ -1,14 +1,15 @@
 import UUIDV4 from 'uuid/v4';
 
 export default class MapStyleLayer {
-  constructor(id, layer) {
-    this.id = id || UUIDV4();
-    this.layer = layer;
+  constructor(layer) {
+    const id = layer.id || UUIDV4();
+    this.id = id;
+    this.layer = Object.assign(layer, {id});
     this.map = null;
   }
   addTo(map) {
     this.map = map;
-    this.map.addLayer(Object.assign({}, this.layer, {id: this.id}));
+    this.map.addLayer(Object.assign({}, this.layer));
   }
   remove = () => {
     this.map.removeLayer(this.id);

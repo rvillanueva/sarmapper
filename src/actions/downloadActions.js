@@ -14,8 +14,8 @@ export function downloadGPX() {
     const destinationLngLat = markers.byId.direction ? markers.byId.direction.lngLat : null;
     let features = createRingsLayer(ippLngLat, behavior).toJSON().source.data.features;
     if(destinationLngLat) {
-      features = features.concat(createDispersionLinesLayer(ippLngLat, behavior).toJSON().source.data.features);
-      features = features.concat(createDirectionLineLayer(ippLngLat).toJSON().source.data);
+      features = features.concat(createDispersionLinesLayer(ippLngLat, destinationLngLat, behavior).toJSON().source.data.features);
+      features = features.concat(createDirectionLineLayer(ippLngLat, destinationLngLat).toJSON().source.data);
     }
     const geoJSON = {
       "type": "FeatureCollection",
