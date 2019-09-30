@@ -7,6 +7,7 @@ import {bindActionCreators} from 'redux';
 import {flyTo} from '../actions/mapActions';
 import {setBehavior} from '../actions/behaviorActions';
 import {setIPPMarker, clearIPPMarker, setDirectionMarker, clearDirectionMarker} from '../actions/markerActions';
+import {downloadGPX} from '../actions/downloadActions';
 import BehaviorProfiler from '../services/Behaviors';
 
 function parseLatLngString(str) {
@@ -165,7 +166,8 @@ function mapDispatchToProps(dispatch) {
     clearIPPMarker: bindActionCreators(clearIPPMarker, dispatch),
     setDirectionMarker: bindActionCreators(setDirectionMarker, dispatch),
     clearDirectionMarker: bindActionCreators(clearDirectionMarker, dispatch),
-    setBehavior: bindActionCreators(setBehavior, dispatch)
+    setBehavior: bindActionCreators(setBehavior, dispatch),
+    downloadGPX: bindActionCreators(downloadGPX, dispatch)
   };
 }
 

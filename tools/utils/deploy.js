@@ -1,4 +1,4 @@
-require('dotenv').load();
+require('dotenv').config();
 const path = require('path');
 const s3Utils = require('./s3');
 const fsUtils = require('./fs');
