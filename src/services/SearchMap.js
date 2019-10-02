@@ -67,6 +67,7 @@ export default class SearchMap extends EventEmitter {
       });
     }
     this.statsLayer.drawRings(this.markers.ipp, this.behavior);
+    if(this.markers.destination) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
     dispatch(updateIPPMarker(this.markers.ipp));
   }
   clearIPPMarker = () => {
@@ -78,7 +79,9 @@ export default class SearchMap extends EventEmitter {
   }
   flyTo = lngLat => {
     lngLat = new LngLat(lngLat);
-    this.map.flyTo(lngLat.toJSON());
+    this.map.flyTo({
+      center: lngLat.toJSON()
+    });
     dispatch(updateMapCenter(lngLat.toJSON()));
   }
   getLngLat() {
@@ -112,6 +115,7 @@ export default class SearchMap extends EventEmitter {
       this.markers.destination.remove();
     }
     this.markers.destination = null;
+    this.statsLayer.clearDispersion();
     dispatch(updateDestinationMarker(null));
   }
   setBehavior(behavior) {

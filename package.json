@@ -9,6 +9,7 @@
     "eslint-utils": "^1.4.2",
     "events": "^3.0.0",
     "geolib": "^3.0.4",
+    "global-mercator": "^3.1.0",
     "immutable": "^4.0.0-rc.12",
     "js-file-download": "^0.4.8",
     "leaflet": "^1.5.1",
