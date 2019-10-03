@@ -1,5 +1,5 @@
 import {profiles as profileData} from '../../data/behaviors';
-import Behavior from './Behavior';
+import StatisticalBehavior from './StatisticalBehavior';
 
 export default class BehaviorProfiles {
   constructor() {
@@ -33,7 +33,7 @@ export default class BehaviorProfiles {
     const behavior = this.searchTree({
       children: this.profiles
     }, requestedHierarchy).child.behavior;
-    return new Behavior(behavior);
+    return new StatisticalBehavior(behavior);
   }
   getProfiles() {
     return {

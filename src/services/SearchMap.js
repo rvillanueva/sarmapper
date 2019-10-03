@@ -8,7 +8,7 @@ import {setBehavior} from '../actions/behaviorActions';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
-import StatisticsVirtualLayer from './StatisticsVirtualLayer';
+import StatisticsVirtualLayer from './statistics/StatisticsVirtualLayer';
 import EventEmitter from 'events';
 import store from '../store';
 

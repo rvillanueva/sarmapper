@@ -8,7 +8,7 @@ import {setBehavior} from './actions/behaviorActions';
 import {downloadGPX} from './actions/downloadActions';
 import {updateMapCenter} from './actions/mapActions';
 import searchMap from './store/searchMap';
-import BehaviorProfiles from './services/behavior/BehaviorProfiles';
+import BehaviorProfiles from './services/statistics/StatisticalBehaviorProfiles';
 
 class App extends React.Component {
   constructor() {

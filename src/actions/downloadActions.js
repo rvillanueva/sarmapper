@@ -4,7 +4,7 @@ import {
   createRingsLayer,
   createDispersionLinesLayer,
   createDirectionLineLayer
-} from '../services/statisticsStyleLayers';
+} from '../services/statistics/geometry';
 
 export function downloadGPX() {
   return function(dispatch, getState) {

@@ -3,7 +3,7 @@ import {
   createRingLabelsLayer,
   createDispersionLinesLayer,
   createDirectionLineLayer
-} from './statisticsStyleLayers';
+} from './geometry';
 
 export default class StatisticsVirtualLayer {
   constructor() {

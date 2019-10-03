@@ -30,6 +30,9 @@ export default class MarkerManager extends React.Component {
     }
   }
   componentDidMount() {
+    this.resetLngLatInput();
+  }
+  resetLngLatInput() {
     this.setState({
       lngLatInput: this.props.lngLat ? coordinatesToString(this.props.lngLat) : ''
     })
@@ -43,7 +46,6 @@ export default class MarkerManager extends React.Component {
     }
   }
   setDirtyLngLatString = str => {
-    console.log(str)
     this.setState({
       lngLatInput: str,
       lngLatInputIsDirty: true
@@ -51,7 +53,11 @@ export default class MarkerManager extends React.Component {
   }
   setLngLatFromInput() {
     const lngLat = parseLatLngString(this.state.lngLatInput);
-    this.props.setLngLat(lngLat);
+    if(lngLat) {
+      this.props.setLngLat(lngLat);
+    } else {
+      this.resetLngLatInput();
+    }
   }
   renderIfMarkerExists() {
     return <div>
@@ -70,7 +76,7 @@ export default class MarkerManager extends React.Component {
   render() {
     return (
       <div className="marker-manager">
-        <h2>{this.props.name}</h2>
+        <span className="marker__name">{this.props.name}</span>
         {
           this.props.lngLat
           ? this.renderIfMarkerExists()

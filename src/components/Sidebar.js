@@ -4,10 +4,11 @@ import LngLat from '../services/LngLat';
 import BehaviorStats from './BehaviorStats';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import BehaviorProfiles from '../services/behavior/BehaviorProfiles';
+import BehaviorProfiles from '../services/statistics/StatisticalBehaviorProfiles';
 import {downloadGPX} from '../actions/downloadActions';
 import searchMap from '../store/searchMap';
 import MarkerManager from './MarkerManager';
+import SidebarSection from './SidebarSection';
 
 class Sidebar extends React.Component {
   constructor() {
@@ -53,49 +54,48 @@ class Sidebar extends React.Component {
           <div className="sidebar__content">
             <h1 className="title">Missing Person Behavior Mapper</h1>
             <div>
-              <MarkerManager
-                name="Initial Planning Point"
-                lngLat={this.props.ipp ? this.props.ipp.lngLat : null}
-                setLngLat={lngLat => this.setMarkerLngLat('ipp', lngLat)}
-                remove={() => this.removeMarker('ipp')}
-                flyTo={lngLat => this.searchMap.flyTo(lngLat)}
-                mapLngLat={this.props.mapCenter}
-              />
-              <MarkerManager
-                name="Direction of Travel"
-                lngLat={this.props.direction ? this.props.direction.lngLat : null}
-                setLngLat={lngLat => this.setMarkerLngLat('direction', lngLat)}
-                remove={() => this.removeMarker('direction')}
-                flyTo={this.searchMap.flyTo}
-                mapLngLat={this.props.mapCenter}
-              />
-            </div>
-            <div>
-              <h2>Behavior Range Rings</h2>
-              {this.props.behavior ? <ProfileSelector
-                profiles={profiles}
-                behavior={this.props.behavior}
-                setBehaviorByKeys={this.props.setBehaviorByKeys}
-               /> : null}
-            </div>
-            <br />
-            <div>
-              <h2>Behavior Stats</h2>
-              {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
-            </div>
-            <br />
-            <div>
-              <h2>Export</h2>
-              <button onClick={downloadGPX}>Download GPX</button>
-            </div>
-            <br />
-            <br />
-            <div className="bylines">
-              <span id="byline">Data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester. </span>
-              Interface and visualization designed by <a href="mailto:ryanvill@gmail.com">Ryan Villanueva</a>.
-              <div className="disclaimer">
-                The Lost Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.
-              </div>
+              <SidebarSection name="Markers">
+                <div className="sidebar-section__padding">
+                  <MarkerManager
+                    name="Initial Planning Point"
+                    lngLat={this.props.ipp ? this.props.ipp.lngLat : null}
+                    setLngLat={lngLat => this.setMarkerLngLat('ipp', lngLat)}
+                    remove={() => this.removeMarker('ipp')}
+                    flyTo={lngLat => this.searchMap.flyTo(lngLat)}
+                    mapLngLat={this.props.mapCenter}
+                  />
+                  <MarkerManager
+                    name="Direction of Travel"
+                    lngLat={this.props.direction ? this.props.direction.lngLat : null}
+                    setLngLat={lngLat => this.setMarkerLngLat('direction', lngLat)}
+                    remove={() => this.removeMarker('direction')}
+                    flyTo={this.searchMap.flyTo}
+                    mapLngLat={this.props.mapCenter}
+                  />
+                </div>
+              </SidebarSection>
+              <SidebarSection name="Statistical Behavior">
+                <div className="sidebar-section__padding">
+                  {this.props.behavior ? <ProfileSelector
+                    profiles={profiles}
+                    behavior={this.props.behavior}
+                    setBehaviorByKeys={this.props.setBehaviorByKeys}
+                   /> : null}
+                   {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
+                </div>
+              </SidebarSection>
+              <SidebarSection name="Export">
+                <div className="sidebar-section__padding">
+                  <button onClick={downloadGPX}>Download GPX</button>
+                </div>
+              </SidebarSection>
+              <SidebarSection name="About">
+                <div className="sidebar-section__padding bylines">
+                  <p>Interface and visualization designed by <a href="mailto:ryanvill@gmail.com">Ryan Villanueva</a>.</p>
+                  <p>Statistical data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester.<br/></p>
+                  <p>The Missing Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.</p>
+                </div>
+              </SidebarSection>
             </div>
           </div>
         </div>
