@@ -22,9 +22,10 @@ export default class LngLat {
       distance,
       bearing
     );
-    this.lat = newCoords.latitude;
-    this.lng = newCoords.longitude;
-    return new LngLat(this);
+    return new LngLat({
+      lat: newCoords.latitude,
+      lng: newCoords.longitude
+    });
   }
   getBearingTo(lngLat) {
     lngLat = new LngLat(lngLat);

@@ -3,10 +3,16 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.25",
+    "@fortawesome/free-solid-svg-icons": "^5.11.2",
+    "@fortawesome/react-fontawesome": "^0.1.5",
     "@mapbox/mapbox-gl-geocoder": "^4.4.2",
     "aws-sdk": "^2.535.0",
+    "dotenv": "^8.1.0",
     "eslint-utils": "^1.4.2",
+    "events": "^3.0.0",
     "geolib": "^3.0.4",
+    "global-mercator": "^3.1.0",
     "immutable": "^4.0.0-rc.12",
     "js-file-download": "^0.4.8",
     "leaflet": "^1.5.1",
@@ -44,5 +50,6 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "devDependencies": {}
 }

@@ -3,7 +3,7 @@ import React from 'react';
 export default function BehaviorStats({
   behavior
 }) {
-  return <div>
+  return <div className="statistical-behavior-data-table">
     <table style={{width: '100%', fontSize: 12}}>
       <thead>
         <tr>

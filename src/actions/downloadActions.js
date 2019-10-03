@@ -1,25 +1,26 @@
 import fileDownload from 'js-file-download';
 import toGPX from 'togpx';
-import InitialPlanningPoint from '../services/InitialPlanningPoint';
-import DirectionPoint from '../services/DirectionPoint';
-import {Behavior} from '../services/Behaviors'
+import {
+  createRingsLayer,
+  createDispersionLinesLayer,
+  createDirectionLineLayer
+} from '../services/statistics/geometry';
 
 export function downloadGPX() {
   return function(dispatch, getState) {
-    const markersById = getState().markers.byId;
-    const behavior = getState().behavior;
-    const ipp = new InitialPlanningPoint(markersById.ipp.lngLat, behavior);
-    const directionPoint = markersById.direction ? new DirectionPoint(markersById.direction.lngLat, behavior) : null;
-    let features = ipp.getRangeRingCollectionLayer().source.data.features;
-    if(directionPoint) {
-      features = features.concat(directionPoint.getDispersionCollectionLayer(ipp.getLngLat(), new Behavior(behavior)).source.data.features);
-      features = features.concat(directionPoint.getDirectionLineLayer(ipp.getLngLat()).source.data);
+    const {markers, behavior} = getState();
+
+    const ippLngLat = markers.byId.ipp ? markers.byId.ipp.lngLat : null;
+    const destinationLngLat = markers.byId.direction ? markers.byId.direction.lngLat : null;
+    let features = createRingsLayer(ippLngLat, behavior).toJSON().source.data.features;
+    if(destinationLngLat) {
+      features = features.concat(createDispersionLinesLayer(ippLngLat, destinationLngLat, behavior).toJSON().source.data.features);
+      features = features.concat(createDirectionLineLayer(ippLngLat, destinationLngLat).toJSON().source.data);
     }
     const geoJSON = {
       "type": "FeatureCollection",
       "features": features
     }
-    console.log(geoJSON)
     const gpx = toGPX(geoJSON);
     fileDownload(gpx, `${new Date().valueOf()}.gpx`);
   };

@@ -1,4 +1,4 @@
-import LngLat from './LngLat';
+import LngLat from '../LngLat';
 
 export default class RangeRing {
   constructor(lngLat, distance, name = '') {

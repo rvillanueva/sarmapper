@@ -31,7 +31,7 @@ body, html, #root {
   cursor: pointer;
   background-color: rgb(235, 100, 100);
 }
-.direction-marker {
+.destination-marker {
   height: 12px;
   width: 12px;
   background-color: rgb(215, 134, 59);
@@ -39,29 +39,29 @@ body, html, #root {
   border-radius: 50%;
   box-shadow: 0px 2px 4px 1px rgba(79, 79, 79, 0.4);
 }
-.direction-marker:hover {
+.destination-marker:hover {
   cursor: pointer;
   background-color: rgb(227, 141, 141);
 }
 
 .sidebar__wrapper {
-  width: 290px;
+  width: 320px;
+  background-color: white;
   max-width: 30%;
   height: 100%;
-  background-color: white;
   max-height: 100%;
   overflow-y: scroll;
-
+  border-right: 1px solid rgb(235, 231, 231);
 }
 .sidebar__content {
-  padding: 24px;
   color: rgb(79, 79, 79);
   font-size: 14px;
 }
 .title {
-  font-size: 24px;
+  padding: 24px 32px 18px 32px;
+  font-size: 20px;
   margin-top: 0;
-  margin-bottom: 24px;
+  margin-bottom: 0;
 }
 h2 {
   margin: 0;
@@ -77,7 +77,8 @@ h2 {
   width: 100px;
   display: block;
   color: rgb(79, 79, 79);
-  font-size: 14px;
+  font-size: 12px;
+  padding: 1px 0;
 }
 .behavior-selector__dropdown {
   flex: 1;
@@ -88,4 +89,84 @@ h2 {
 .disclaimer {
   font-size: 10px;
   margin-top: 6px;
+}
+
+.marker-manager {
+  margin-bottom: 12px;
+  border-radius: 4px;
+  padding: 6px;
+  margin-left: -6px;
+  margin-right: -6px;
+}
+.marker__name {
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.statistical-behavior-data-table {
+  padding: 6px;
+  border-radius: 4px;
+  margin-left: -6px;
+  margin-right: -6px;
+}
+
+.sidebar-section {
+  border: 1.25px solid rgb(235, 231, 231);
+  border-radius: 4px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 6px;
+  background-color: white;
+  box-shadow: 2px 2px 10px rgba(79, 79, 79, 0.08);
+}
+
+.sidebar-section__header {
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Opera and Firefox */
+}
+
+.sidebar-section__header__caret {
+  padding: 11px 0 11px 24px;
+  width: 30px;
+}
+.sidebar-section__header__name {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+
+
+
+.sidebar-section__body {
+}
+
+.sidebar-section__header:hover {
+  cursor: pointer;
+  background-color: rgb(252, 252, 252);
+}
+
+.sidebar-section__padding {
+  padding: 0 24px 12px 24px;
+}
+
+input.lng-lat-input {
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid rgb(215, 215, 215);
+  background-image:none;
+  background-color:transparent;
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+  padding: 4px;
 }

@@ -2,147 +2,100 @@ import React from 'react';
 import ProfileSelector from './ProfileSelector';
 import LngLat from '../services/LngLat';
 import BehaviorStats from './BehaviorStats';
-import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {flyTo} from '../actions/mapActions';
-import {setBehavior} from '../actions/behaviorActions';
-import {setIPPMarker, clearIPPMarker, setDirectionMarker, clearDirectionMarker} from '../actions/markerActions';
+import {connect} from 'react-redux';
+import BehaviorProfiles from '../services/statistics/StatisticalBehaviorProfiles';
 import {downloadGPX} from '../actions/downloadActions';
-import BehaviorProfiler from '../services/Behaviors';
-
-function parseLatLngString(str) {
-  const split = str.split(',');
-  const lng = Number(split[1]);
-  const lat = Number(split[0]);
-  if(!isNaN(lat) && !isNaN(lng)) {
-    return {lng, lat};
-  }
-  return null;
-}
-
-function roundToPrecision(value, precision = 0) {
-  const multiplier = Math.pow(10, precision);
-  return Math.round(value * multiplier) / multiplier;
-}
-
-function coordinatesToString(coords) {
-  coords = new LngLat(coords).toJSON();
-  return `${roundToPrecision(coords.lat, 6)}, ${roundToPrecision(coords.lng, 6)}`;
-}
+import searchMap from '../store/searchMap';
+import MarkerManager from './MarkerManager';
+import SidebarSection from './SidebarSection';
 
 class Sidebar extends React.Component {
   constructor() {
     super();
-    this.state = {
-      ippInput: '',
-      ippInputIsDirty: false
-    }
+    this.searchMap = searchMap;
   }
-  componentDidMount() {
-    this.setState({
-      ippInput: this.props.ipp ? coordinatesToString(this.props.ipp.lngLat) : ''
-    })
-  }
-  componentDidUpdate(prevProps) {
-    if(prevProps.ipp !== this.props.ipp && this.props.ipp) {
-      this.setState({
-        ippInput: coordinatesToString(this.props.ipp.lngLat),
-        ippInputIsDirty: false
-      })
-    }
-  }
-  setDirtyIPPCoordinateString(str) {
-    this.setState({
-      ippInput: str,
-      ippInputIsDirty: true
-    })
-  }
-  setIPPFromInput = () => {
-    const lngLat = parseLatLngString(this.state.ippInput);
-    this.setIPP(lngLat);
-  }
-  setIPP = lngLat => {
-    if(lngLat) {
-      this.props.setIPPMarker(lngLat);
-    }
-  }
-  addDirectionMarker(lngLat) {
-    if(!lngLat) {
-      lngLat = new LngLat(this.props.mapCenter).moveTo(0, 2000);
+  addDestinationMarker() {
+    if(this.props.ipp) {
+      const lngLat = new LngLat(this.props.ipp.lngLat).moveTo(0, 2000);
+      searchMap.setDestinationMarker(lngLat);
     } else {
-      lngLat = new LngLat(lngLat);
+      const lngLat = new LngLat(this.props.mapCenter);
+      searchMap.setDestinationMarker(lngLat);
     }
-    this.props.setDirectionMarker(lngLat);
+  }
+  setMarkerLngLat = (markerId, lngLat) => {
+    switch(markerId) {
+    case 'ipp':
+      return this.searchMap.setIPPMarker(lngLat);
+    case 'direction':
+      return this.searchMap.setDestinationMarker(lngLat);
+    default:
+      throw new Error(`Marker id ${markerId} is not recognized.`);
+    }
+  }
+  removeMarker = markerId => {
+    switch(markerId) {
+    case 'ipp':
+      return this.searchMap.clearIPPMarker();
+    case 'direction':
+      return this.searchMap.clearDestinationMarker();
+    default:
+      throw new Error(`Marker id ${markerId} is not recognized.`);
+    }
   }
   render() {
     const {
       downloadGPX
     } = this.props;
-    const profiles = new BehaviorProfiler().getProfiles();
-      const clearIPPButton = this.props.ipp
-        ?
-          <button onClick={() => this.props.clearIPPMarker()}>Clear</button>
-        : null;
-      const ippCoordinateInput = this.props.ipp
-        ? <input value={this.state.ippInput} onChange={evt => this.setDirtyIPPCoordinateString(evt.target.value)}/>
-        : null;
-      const setNewIPPButton = this.state.ippInputIsDirty
-        ? <button onClick={this.setIPPFromInput}>Update</button>
-        : null;
-      const centerIPPButton = !this.props.ipp
-        ? <button onClick={() => this.setIPP(this.props.mapCenter)}>Add</button>
-        : <button onClick={() => this.setIPP(this.props.mapCenter)}>Set Here</button>;
-      const goToButton = this.props.ipp
-        ? <button onClick={() => this.props.flyTo(this.props.ipp.lngLat)}>Go To IPP</button>
-        : null;
+    const profiles = new BehaviorProfiles().getProfiles();
       return (
         <div className="sidebar__wrapper">
           <div className="sidebar__content">
             <h1 className="title">Missing Person Behavior Mapper</h1>
             <div>
-              <h2>Initial Planning Point</h2>
-              {ippCoordinateInput} {setNewIPPButton}
-              <br />
-              {centerIPPButton}
-              {goToButton}
-              {clearIPPButton}
-            </div>
-            <br />
-            <div>
-              <h2>Direction of Travel</h2>
-              {
-                this.props.direction
-                ? <button onClick={() => this.props.clearDirectionMarker()}>Clear</button>
-                : <button onClick={() => this.addDirectionMarker()}>Add</button>
-              }
-            </div>
-            <br />
-            <div>
-              <h2>Behavior Range Rings</h2>
-              {this.props.behavior ? <ProfileSelector
-                profiles={profiles}
-                behavior={this.props.behavior}
-                setBehavior={this.props.setBehavior}
-               /> : null}
-            </div>
-            <br />
-            <div>
-              <h2>Behavior Stats</h2>
-              {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
-            </div>
-            <br />
-            <div>
-              <h2>Export</h2>
-              <button onClick={downloadGPX}>Download GPX</button>
-            </div>
-            <br />
-            <br />
-            <div className="bylines">
-              <span id="byline">Data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester. </span>
-              Interface and visualization designed by <a href="mailto:ryanvill@gmail.com">Ryan Villanueva</a>.
-              <div className="disclaimer">
-                The Lost Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.
-              </div>
+              <SidebarSection name="Markers">
+                <div className="sidebar-section__padding">
+                  <MarkerManager
+                    name="Initial Planning Point"
+                    lngLat={this.props.ipp ? this.props.ipp.lngLat : null}
+                    setLngLat={lngLat => this.setMarkerLngLat('ipp', lngLat)}
+                    remove={() => this.removeMarker('ipp')}
+                    flyTo={lngLat => this.searchMap.flyTo(lngLat)}
+                    mapLngLat={this.props.mapCenter}
+                  />
+                  <MarkerManager
+                    name="Direction of Travel"
+                    lngLat={this.props.direction ? this.props.direction.lngLat : null}
+                    setLngLat={lngLat => this.setMarkerLngLat('direction', lngLat)}
+                    remove={() => this.removeMarker('direction')}
+                    flyTo={this.searchMap.flyTo}
+                    mapLngLat={this.props.mapCenter}
+                  />
+                </div>
+              </SidebarSection>
+              <SidebarSection name="Statistical Behavior">
+                <div className="sidebar-section__padding">
+                  {this.props.behavior ? <ProfileSelector
+                    profiles={profiles}
+                    behavior={this.props.behavior}
+                    setBehaviorByKeys={this.props.setBehaviorByKeys}
+                   /> : null}
+                   {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
+                </div>
+              </SidebarSection>
+              <SidebarSection name="Export">
+                <div className="sidebar-section__padding">
+                  <button onClick={downloadGPX}>Download GPX</button>
+                </div>
+              </SidebarSection>
+              <SidebarSection name="About">
+                <div className="sidebar-section__padding bylines">
+                  <p>Interface and visualization designed by <a href="mailto:ryanvill@gmail.com">Ryan Villanueva</a>.</p>
+                  <p>Statistical data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester.<br/></p>
+                  <p>The Missing Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.</p>
+                </div>
+              </SidebarSection>
             </div>
           </div>
         </div>
@@ -161,12 +114,6 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return {
-    flyTo: bindActionCreators(flyTo, dispatch),
-    setIPPMarker: bindActionCreators(setIPPMarker, dispatch),
-    clearIPPMarker: bindActionCreators(clearIPPMarker, dispatch),
-    setDirectionMarker: bindActionCreators(setDirectionMarker, dispatch),
-    clearDirectionMarker: bindActionCreators(clearDirectionMarker, dispatch),
-    setBehavior: bindActionCreators(setBehavior, dispatch),
     downloadGPX: bindActionCreators(downloadGPX, dispatch)
   };
 }
