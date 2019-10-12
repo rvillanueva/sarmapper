@@ -40,6 +40,9 @@ export default class SearchMap extends EventEmitter {
     this.map.on('move', data => this.emit('move', data))
     this.statsLayer.addTo(this.map);
   }
+  resize() {
+    if(this.map) this.map.resize();
+  }
   setIPPMarker = lngLat => {
     lngLat = new LngLat(lngLat);
     if(this.markers.ipp) {

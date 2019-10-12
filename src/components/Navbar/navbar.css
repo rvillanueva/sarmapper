@@ -1,0 +1,28 @@
+.navbar {
+  height: 43px;
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  border-bottom: 1px solid rgb(240, 240, 240);
+  color: rgb(79, 79, 79);
+}
+
+.navbar__drawer-button {
+  padding: 11px 13px;
+  height: 40px;
+  width: 40px;
+  margin: 1.5px;
+  border-radius: 50%;
+  box-sizing: border-box;
+}
+
+.navbar__drawer-button:hover {
+  cursor: pointer;
+  background-color: rgb(241, 241, 241);
+}
+
+.navbar__title {
+  font-weight: bold;
+  padding: 14px 4px;
+  font-size: 0.86em;
+}

@@ -1,7 +1,7 @@
-import AgentStep from './AgentStep';
+import AgentState from './AgentState';
 
 export default class AgentBehavior {
-  generate(agentTraits, environmentTraits) {
-    return new AgentStep();
+  calculateNewState({state, traits, influences, options}) {
+    return new AgentState(state);
   }
 }

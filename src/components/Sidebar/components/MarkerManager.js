@@ -1,5 +1,5 @@
 import React from 'react';
-import LngLat from '../services/LngLat';
+import LngLat from '../../../services/LngLat';
 
 function parseLatLngString(str) {
   const split = str.split(',');
@@ -65,9 +65,11 @@ export default class MarkerManager extends React.Component {
       {this.state.lngLatInputIsDirty
         ? <button onClick={() => this.setLngLatFromInput()}>Update</button>
         : null}
-      <button onClick={() => this.props.setLngLat(this.props.mapLngLat)}>Set Here</button>
-      <button onClick={() => this.props.flyTo(this.props.lngLat)}>Go To</button>
-      <button onClick={() => this.props.remove()}>Clear</button>
+        <div>
+          <button onClick={() => this.props.setLngLat(this.props.mapLngLat)}>Set Here</button>
+          <button onClick={() => this.props.flyTo(this.props.lngLat)}>Go To</button>
+          <button onClick={() => this.props.remove()}>Clear</button>
+        </div>
       </div>
   }
   renderIfNoMarker() {

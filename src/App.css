@@ -9,11 +9,17 @@ body, html, #root {
   height: 100%;
   width: 100%;
   display: flex;
-  flex-direction: row
+  flex-direction: column;
+}
+.app-content {
+  flex: 1;
+  display: flex;
+  flex-direction: row;
 }
 .map-container {
   flex: 1;
   height: 100%;
+  position: relative;
 }
 #map {
   height: 100%;
@@ -44,24 +50,15 @@ body, html, #root {
   background-color: rgb(227, 141, 141);
 }
 
-.sidebar__wrapper {
-  width: 320px;
-  background-color: white;
-  max-width: 30%;
-  height: 100%;
-  max-height: 100%;
-  overflow-y: scroll;
-  border-right: 1px solid rgb(235, 231, 231);
-}
-.sidebar__content {
-  color: rgb(79, 79, 79);
-  font-size: 14px;
-}
 .title {
-  padding: 24px 32px 18px 32px;
   font-size: 20px;
   margin-top: 0;
   margin-bottom: 0;
+}
+.author, .author a {
+  margin-top: 6px;
+  font-size: 12px;
+  color: rgb(85, 85, 85);
 }
 h2 {
   margin: 0;
@@ -110,55 +107,6 @@ h2 {
   margin-right: -6px;
 }
 
-.sidebar-section {
-  border: 1.25px solid rgb(235, 231, 231);
-  border-radius: 4px;
-  margin-left: 12px;
-  margin-right: 12px;
-  margin-bottom: 6px;
-  background-color: white;
-  box-shadow: 2px 2px 10px rgba(79, 79, 79, 0.08);
-}
-
-.sidebar-section__header {
-  background-color: white;
-  display: flex;
-  flex-direction: row;
-  -webkit-touch-callout: none; /* iOS Safari */
-  -webkit-user-select: none; /* Safari */
-   -khtml-user-select: none; /* Konqueror HTML */
-     -moz-user-select: none; /* Old versions of Firefox */
-      -ms-user-select: none; /* Internet Explorer/Edge */
-          user-select: none; /* Non-prefixed version, currently
-                                supported by Chrome, Opera and Firefox */
-}
-
-.sidebar-section__header__caret {
-  padding: 11px 0 11px 24px;
-  width: 30px;
-}
-.sidebar-section__header__name {
-  flex: 1;
-  padding: 12px 0;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-
-
-
-.sidebar-section__body {
-}
-
-.sidebar-section__header:hover {
-  cursor: pointer;
-  background-color: rgb(252, 252, 252);
-}
-
-.sidebar-section__padding {
-  padding: 0 24px 12px 24px;
-}
-
 input.lng-lat-input {
   height: 12px;
   border-radius: 2px;
@@ -169,4 +117,16 @@ input.lng-lat-input {
   -moz-box-shadow: none;
   box-shadow: none;
   padding: 4px;
+}
+
+.source-reference {
+  margin-top: 6px;
+  font-size: 11px;
+  line-height: 1.2em;
+}
+
+@media only screen and (max-width: 720px) {
+  .mapboxgl-ctrl-top-right {
+    max-width: 80% !important;
+  }
 }

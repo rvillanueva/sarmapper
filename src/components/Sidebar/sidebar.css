@@ -1,0 +1,62 @@
+
+.sidebar__wrapper {
+  max-width: 85%;
+  width: 320px;
+  background-color: white;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: scroll;
+  border-right: 1px solid rgb(235, 231, 231);
+}
+.sidebar__content {
+  color: rgb(79, 79, 79);
+  padding-top: 12px;
+  font-size: 14px;
+}
+
+.sidebar-section {
+  border: 1.25px solid rgb(235, 231, 231);
+  border-radius: 4px;
+  margin-left: 12px;
+  margin-right: 12px;
+  margin-bottom: 6px;
+  background-color: white;
+  box-shadow: 2px 2px 10px rgba(79, 79, 79, 0.08);
+}
+
+.sidebar-section__header {
+  background-color: white;
+  display: flex;
+  flex-direction: row;
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none; /* Safari */
+   -khtml-user-select: none; /* Konqueror HTML */
+     -moz-user-select: none; /* Old versions of Firefox */
+      -ms-user-select: none; /* Internet Explorer/Edge */
+          user-select: none; /* Non-prefixed version, currently
+                                supported by Chrome, Opera and Firefox */
+}
+
+.sidebar-section__header__caret {
+  padding: 11px 0 11px 24px;
+  width: 30px;
+}
+.sidebar-section__header__name {
+  flex: 1;
+  padding: 12px 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+
+.sidebar-section__body {
+}
+
+.sidebar-section__header:hover {
+  cursor: pointer;
+  background-color: rgb(252, 252, 252);
+}
+
+.sidebar-section__padding {
+  padding: 0 24px 18px 24px;
+}

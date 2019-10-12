@@ -1,5 +1,5 @@
 import React from 'react';
-import {names} from '../data/behaviors';
+import {names} from '../../../data/behaviors';
 
 function BehaviorSelector({profiles, behavior, setBehaviorByKeys}) {
   function handleChange(l, value) {

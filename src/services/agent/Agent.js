@@ -1,14 +1,31 @@
 export default class Agent {
-  constructor(lngLat, seedTraits) {
-    this.steps = [];
+  constructor(traits, behavior) {
+    this.traits = traits;
+    this.behavior = behavior;
+    this.states = [];
   }
-  addStep(step) {
-    this.steps.push(step);
+  getEnvironmentFromState() {
+    return {};
   }
-  getLastStep() {
-    return this.steps[this.steps.length - 1];
+  generateNextState(environment, options) {
+    const newState = this.behavior.calculateNewState({
+      state: this.getLastState(),
+      traits: this.traits,
+      environment,
+      options
+    });
+    this.pushState(newState);
   }
-  getStepByIndex(i) {
-    return this.steps(i);
+  getStatesLength() {
+    return this.states.length;
+  }
+  pushState(state) {
+    this.states.push(state);
+  }
+  getLastState() {
+    return this.states[this.states.length - 1];
+  }
+  getStatebyIndex(i) {
+    return this.states[i];
   }
 }

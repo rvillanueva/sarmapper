@@ -1,14 +1,17 @@
 import React from 'react';
-import ProfileSelector from './ProfileSelector';
-import LngLat from '../services/LngLat';
-import BehaviorStats from './BehaviorStats';
+import PropTypes from 'prop-types';
+import LngLat from '../../services/LngLat';
 import {bindActionCreators} from 'redux';
 import {connect} from 'react-redux';
-import BehaviorProfiles from '../services/statistics/StatisticalBehaviorProfiles';
-import {downloadGPX} from '../actions/downloadActions';
-import searchMap from '../store/searchMap';
-import MarkerManager from './MarkerManager';
-import SidebarSection from './SidebarSection';
+import BehaviorProfiles from '../../services/statistics/StatisticalBehaviorProfiles';
+import {downloadGPX} from '../../actions/downloadActions';
+import searchMap from '../../store/searchMap';
+import MarkerManager from './components/MarkerManager';
+import SidebarSection from './components/SidebarSection';
+import Subscribe from './components/Subscribe';
+import ProfileSelector from './components/ProfileSelector';
+import BehaviorStats from './components/BehaviorStats';
+import './sidebar.css';
 
 class Sidebar extends React.Component {
   constructor() {
@@ -48,11 +51,11 @@ class Sidebar extends React.Component {
     const {
       downloadGPX
     } = this.props;
+    if(this.props.isOpen === false) return null;
     const profiles = new BehaviorProfiles().getProfiles();
       return (
         <div className="sidebar__wrapper">
           <div className="sidebar__content">
-            <h1 className="title">Missing Person Behavior Mapper</h1>
             <div>
               <SidebarSection name="Markers">
                 <div className="sidebar-section__padding">
@@ -82,6 +85,17 @@ class Sidebar extends React.Component {
                     setBehaviorByKeys={this.props.setBehaviorByKeys}
                    /> : null}
                    {this.props.behavior ? <BehaviorStats behavior={this.props.behavior}/> : null}
+                   <div className="source-reference">Source: <a href="https://www.dbs-sar.com/SAR_Research/ISRID.htm">International Search &amp; Rescue Database</a> (2011)</div>
+                </div>
+              </SidebarSection>
+              <SidebarSection name="Simulated Behavior">
+                <div className="sidebar-section__padding">
+                  Simulations
+                  Time Per Step
+                  Travel Speed
+
+                  <button className="btn btn-lg">Run</button>
+                  <button className="btn btn-lg">Clear</button>
                 </div>
               </SidebarSection>
               <SidebarSection name="Export">
@@ -91,17 +105,27 @@ class Sidebar extends React.Component {
               </SidebarSection>
               <SidebarSection name="About">
                 <div className="sidebar-section__padding bylines">
-                  <p>Interface and visualization designed by <a href="mailto:ryanvill@gmail.com">Ryan Villanueva</a>.</p>
-                  <p>Statistical data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester.<br/></p>
-                  <p>The Missing Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.</p>
+                  <p>Interface and visualization designed by <a href="mailto:ryan@sarmapper.org">Ryan Villanueva</a>.</p>
+                  <p>Statistical behavior data from <a href="http://www.dbs-sar.com/">Lost Person Behavior</a> by Robert Koester.<br/></p>
+                  <p>Open source code available on <a href="https://github.com/rvillanueva/sarmapper">Github</a>.</p>
+                  <p>The Lost Person Behavior Mapper does not guarantee that the information provided is 100% accurate. It is intended to be used as a supplemental tool for Search and Rescue efforts and cannot replace other search techniques. If you have a missing person to report, please contact your local law enforcement immediately.</p>
                 </div>
               </SidebarSection>
+              <Subscribe />
             </div>
           </div>
         </div>
       );
   }
 }
+
+Sidebar.propTypes = {
+  isOpen: PropTypes.bool,
+  ipp: PropTypes.object,
+  direction: PropTypes.object,
+  behavior: PropTypes.object
+};
+
 
 function mapStateToProps(state) {
   return {
