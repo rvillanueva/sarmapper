@@ -1,6 +1,5 @@
 import React from 'react';
 import './App.css';
-import Navbar from './components/Navbar/Navbar';
 import Sidebar from './components/Sidebar/Sidebar';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {connect} from 'react-redux';
@@ -10,13 +9,18 @@ import {downloadGPX} from './actions/downloadActions';
 import {updateMapCenter} from './actions/mapActions';
 import searchMap from './store/searchMap';
 import BehaviorProfiles from './services/statistics/StatisticalBehaviorProfiles';
+import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
+import {
+  faCaretRight,
+  faCaretLeft,
+} from '@fortawesome/free-solid-svg-icons';
 
 class App extends React.Component {
   constructor() {
     super();
     this.profiles = new BehaviorProfiles();
     this.state = {
-      sidebarIsOpen: window.innerWidth < 600 ? false : true
+      sidebarIsOpen: true
     }
   }
   componentDidMount() {
@@ -43,7 +47,6 @@ class App extends React.Component {
   render() {
     return (
       <div className="app">
-        <Navbar toggleDrawer={this.toggleSidebarOpen}/>
         <div className="app-content">
           <Sidebar
             setBehaviorByKeys={this.setBehaviorByKeys}
@@ -51,6 +54,11 @@ class App extends React.Component {
           />
           <div className="map-container">
             <div id="map" />;
+            <div className="sidebar-toggle-container">
+              <div className="sidebar-toggle-button" onClick={this.toggleSidebarOpen}>
+                <FontAwesomeIcon icon={this.state.sidebarIsOpen ? faCaretLeft : faCaretRight}/>
+              </div>
+            </div>
           </div>
         </div>
       </div>

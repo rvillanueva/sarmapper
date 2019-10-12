@@ -56,6 +56,10 @@ class Sidebar extends React.Component {
       return (
         <div className="sidebar__wrapper">
           <div className="sidebar__content">
+            <div className="sidebar__heading">
+              <h1 className="title">Lost Person Behavior Mapper</h1>
+              <div className="author">by <a href="mailto: ryan@sarmapper.org">Ryan Villanueva</a></div>
+            </div>
             <div>
               <SidebarSection name="Markers">
                 <div className="sidebar-section__padding">

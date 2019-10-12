@@ -125,6 +125,34 @@ input.lng-lat-input {
   line-height: 1.2em;
 }
 
+.sidebar-toggle-container {
+  height: 100%;
+  width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+}
+
+.sidebar-toggle-button {
+  height: 46px;
+  width: 20px;
+  background-color: white;
+  box-shadow: 2px 2px 2px rgba(84, 84, 84, 0.2);
+  border-radius: 0 3px 3px 0;
+  color: rgb(61, 61, 61);
+  padding: 13px 0;
+  box-sizing: border-box;
+  text-align: center;
+}
+.sidebar-toggle-button:hover {
+  cursor: pointer;
+}
+
+
 @media only screen and (max-width: 720px) {
   .mapboxgl-ctrl-top-right {
     max-width: 80% !important;
