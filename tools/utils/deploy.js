@@ -17,7 +17,7 @@ async function main() {
         ACL: 'public-read',
         Body: file.data,
         Key: stripHtmlExt(path.relative(basePath, file.filepath)),
-        ContentType: mime.lookup(file.filepath)
+        ContentType: mime.lookup(file.filepath) || 'text/plain'
       }
       if(file.filepath.indexOf('.html') > -1) {
         file.uploadParams.CacheControl = 'max-age=0,no-cache,no-store,must-revalidate';
