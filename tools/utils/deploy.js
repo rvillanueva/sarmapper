@@ -7,8 +7,8 @@ const mime = require('mime-types');
 async function main() {
   try {
     const basePath = path.resolve(__dirname, '../../build');
-    const bucketName = process.env.S3_BUCKET;
-    await s3Utils.clearBucket(process.env.S3_BUCKET);
+    const bucketName = process.env.AWS_S3_BUCKET;
+    await s3Utils.clearBucket(bucketName);
     const filepaths = await fsUtils.readDirWalk(`${path.resolve(__dirname, '../../build')}/**/*`);
     const files = await fsUtils.getFiles(filepaths);
     const filesWithMetadata = files.map(file => {
