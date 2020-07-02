@@ -7,8 +7,6 @@
     "@fortawesome/free-solid-svg-icons": "^5.11.2",
     "@fortawesome/react-fontawesome": "^0.1.5",
     "@mapbox/mapbox-gl-geocoder": "^4.4.2",
-    "aws-sdk": "^2.535.0",
-    "dotenv": "^8.1.0",
     "eslint-utils": "^1.4.2",
     "events": "^3.0.0",
     "geolib": "^3.0.4",
@@ -52,5 +50,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "mime-types": "^2.1.27",
+    "aws-sdk": "^2.535.0",
+    "dotenv": "^8.1.0"
+  }
 }
