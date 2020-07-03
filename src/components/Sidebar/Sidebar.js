@@ -92,16 +92,6 @@ class Sidebar extends React.Component {
                    <div className="source-reference">Source: <a href="https://www.dbs-sar.com/SAR_Research/ISRID.htm">International Search &amp; Rescue Database</a> (2011)</div>
                 </div>
               </SidebarSection>
-              <SidebarSection name="Simulated Behavior">
-                <div className="sidebar-section__padding">
-                  Simulations
-                  Time Per Step
-                  Travel Speed
-
-                  <button className="btn btn-lg">Run</button>
-                  <button className="btn btn-lg">Clear</button>
-                </div>
-              </SidebarSection>
               <SidebarSection name="Export">
                 <div className="sidebar-section__padding">
                   <button onClick={downloadGPX}>Download GPX</button>
