@@ -52,7 +52,7 @@
   },
   "devDependencies": {
     "mime-types": "^2.1.27",
-    "aws-sdk": "^2.535.0",
+    "aws-sdk": "^2.814.0",
     "dotenv": "^8.1.0"
   }
 }
