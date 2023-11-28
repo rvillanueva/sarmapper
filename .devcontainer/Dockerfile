@@ -11,7 +11,9 @@ ADD yarn.lock /workspace
 
 RUN yarn install
 
+RUN npx playwright install --with-deps
+
 ADD .gitignore /workspace
 ADD .git /workspace/.git
-     
-RUN npx playwright install --with-deps
+
+ADD . /workspace
