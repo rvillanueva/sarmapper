@@ -1,5 +1,5 @@
-import { computeDestinationPoint, getRhumbLineBearing } from "geolib";
-
+import computeDestinationPoint from "geolib/es/computeDestinationPoint";
+import getRhumbLineBearing from "geolib/es/getRhumbLineBearing";
 export default class LngLat {
   constructor(lngLat) {
     if (Array.isArray(lngLat)) {
