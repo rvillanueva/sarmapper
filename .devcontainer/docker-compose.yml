@@ -8,9 +8,6 @@ services:
       args:
         VARIANT: "20-bullseye"
 
-    depends_on:
-      - "db"
-
     volumes:
       - .:/workspace/.devcontainer
       - workspace:/workspace

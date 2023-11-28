@@ -1,5 +1,5 @@
 {
-  "name": "Merlot",
+  "name": "sarmapper",
   "dockerComposeFile": "docker-compose.yml",
   "service": "workspace",
   "workspaceFolder": "/workspace",
