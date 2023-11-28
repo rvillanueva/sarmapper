@@ -1,0 +1,26 @@
+version: "3.8"
+
+services:
+  workspace:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        VARIANT: "20-bullseye"
+
+    depends_on:
+      - "db"
+
+    volumes:
+      - .:/workspace/.devcontainer
+      - workspace:/workspace
+      - nodemodules:/workspace/node_modules:cached
+      - ../playwright-report:/workspace/playwright-report
+      - ../test-results:/workspace/test-results
+
+    # Overrides default command so things don't shut down after the process ends.
+    command: sleep infinity
+
+volumes:
+  workspace: null
+  nodemodules: null
