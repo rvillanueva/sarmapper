@@ -1,0 +1,16 @@
+previewsEnabled: true
+previewsExpireAfterDays: 5
+services:
+  - type: web
+    name: sarmapper
+    runtime: static
+    buildCommand: yarn build
+    staticPublishPath: ./build
+    pullRequestPreviewsEnabled: true
+    buildFilter:
+      ignoredPaths:
+        - src/**/*.spec.js
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: sameorigin
