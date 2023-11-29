@@ -14,3 +14,4 @@ services:
       - path: /*
         name: X-Frame-Options
         value: sameorigin
+    autoDeploy: false
