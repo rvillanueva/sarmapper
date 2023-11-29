@@ -34,6 +34,13 @@ jobs:
     needs:
       - e2e-tests
     steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          cache: yarn
+      - run: yarn install --frozen-lockfile
+
       - name: Build
         run: yarn build
 
