@@ -1,5 +1,5 @@
 import fileDownload from "js-file-download";
-import toGPX from "../utils/togpx";
+import toGPX from "togpx";
 import toKML from "@maphubs/tokml";
 import {
   createRingsLayer,
