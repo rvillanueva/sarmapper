@@ -8,9 +8,6 @@ export default defineConfig({
     port: process.env.FRONTEND_PORT ? Number(process.env.FRONTEND_PORT) : 3000,
   },
   build: {
-    commonjsOptions: {
-      transformMixedEsModules: true,
-      exclude: ["node_modules/geolib/es/**"],
-    },
+    outDir: "../build",
   },
 });
