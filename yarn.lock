@@ -517,6 +517,14 @@
   resolved "https://registry.yarnpkg.com/@mapbox/whoots-js/-/whoots-js-3.1.0.tgz#497c67a1cef50d1a2459ba60f315e448d2ad87fe"
   integrity sha512-Es6WcD0nO5l+2BOQS4uLfNPYQaNDfbot3X1XUoloz+x0mPDS3eeORZJl06HXjwBG1fOGwCRnzK88LMdxKRrd6Q==
 
+"@maphubs/tokml@^0.6.1":
+  version "0.6.1"
+  resolved "https://registry.yarnpkg.com/@maphubs/tokml/-/tokml-0.6.1.tgz#82c9f42805780e802c649e3d64e4e9326c55b080"
+  integrity sha512-C1qIeLpSDKPIQmYxiPmSZbw1eQDIaWTzeIMf2ym3gzY1q0b7UwDQDuUpccidrdLqOcERx2dlT4URhKl9H2scfA==
+  dependencies:
+    minimist "^1.2.5"
+    rw "^1.3.3"
+
 "@playwright/test@^1.40.1":
   version "1.40.1"
   resolved "https://registry.yarnpkg.com/@playwright/test/-/test-1.40.1.tgz#9e66322d97b1d74b9f8718bacab15080f24cde65"
@@ -1819,6 +1827,11 @@ minimist@1.2.0:
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
   integrity sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=
 
+minimist@^1.2.5:
+  version "1.2.8"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.8.tgz#c1a464e7693302e082a075cee0c057741ac4772c"
+  integrity sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==
+
 mlly@^1.2.0, mlly@^1.4.0:
   version "1.4.2"
   resolved "https://registry.yarnpkg.com/mlly/-/mlly-1.4.2.tgz#7cf406aa319ff6563d25da6b36610a93f2a8007e"
@@ -2518,15 +2531,14 @@ to-utf8@0.0.1:
   resolved "https://registry.yarnpkg.com/to-utf8/-/to-utf8-0.0.1.tgz#d17aea72ff2fba39b9e43601be7b3ff72e089852"
   integrity sha1-0Xrqcv8vujm55DYBvns/9y4ImFI=
 
-togpx@^0.5.4:
-  version "0.5.4"
-  resolved "https://registry.yarnpkg.com/togpx/-/togpx-0.5.4.tgz#b33dbb0541df04bd6ba4f50b86da953424bb7773"
-  integrity sha1-sz27BUHfBL1rpPULhtqVNCS7d3M=
+togpx@rvillanueva/togpx#master:
+  version "0.5.5"
+  resolved "https://codeload.github.com/rvillanueva/togpx/tar.gz/664f9154a7408194d65e8b5fd27a53dcbddbd9d6"
   dependencies:
     concat-stream "~1.0.1"
     jxon "~2.0.0-beta.5"
     optimist "~0.3.5"
-    xmldom "~0.1.17"
+    xmldom "~0.6.0"
 
 tough-cookie@^4.1.3:
   version "4.1.3"
@@ -2767,10 +2779,15 @@ xmlchars@^2.2.0:
   resolved "https://registry.yarnpkg.com/xmlchars/-/xmlchars-2.2.0.tgz#060fe1bcb7f9c76fe2a17db86a9bc3ab894210cb"
   integrity sha512-JZnDKK8B0RCDw84FNdDAIpZK+JuJw+s7Lz8nksI7SIuU3UXJJslUthsi+uWBUYOwPFwW7W7PRLRfUKpxjtjFCw==
 
-xmldom@^0.1.21, xmldom@~0.1.17:
+xmldom@^0.1.21:
   version "0.1.27"
   resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.1.27.tgz#d501f97b3bdb403af8ef9ecc20573187aadac0e9"
   integrity sha1-1QH5ezvbQDr4757MIFcxh6rawOk=
+
+xmldom@~0.6.0:
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/xmldom/-/xmldom-0.6.0.tgz#43a96ecb8beece991cef382c08397d82d4d0c46f"
+  integrity sha512-iAcin401y58LckRZ0TkI4k0VSM1Qg0KGSc3i8rU+xrxe19A/BN1zHyVSJY7uoutVlaTSzYyk/v5AmkewAP7jtg==
 
 xtend@^4.0.0, xtend@^4.0.1:
   version "4.0.2"
