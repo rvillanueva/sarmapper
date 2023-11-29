@@ -35,6 +35,7 @@
     "vitest": "^0.34.6"
   },
   "devDependencies": {
+    "@playwright/test": "^1.40.1",
     "@testing-library/jest-dom": "^6.1.4",
     "aws-sdk": "^2.535.0",
     "dotenv": "^8.1.0",
@@ -43,8 +44,9 @@
   },
   "scripts": {
     "dev": "npx vite serve src",
+    "preview": "npx vite preview --port 3000",
     "build": "yarn install --frozen-lockfile && npx vite build src",
-    "test:e2e": "echo Placeholder"
+    "test:e2e": "npx playwright test"
   },
   "browserslist": {
     "production": [
