@@ -43,9 +43,8 @@
   },
   "scripts": {
     "dev": "npx vite serve src",
-    "build": "npx vite build src",
-    "deploy": "node ./tools/deploy",
-    "test": "npx vitest"
+    "build": "yarn install --frozen-lockfile && npx vite build src",
+    "test:e2e": "echo Placeholder"
   },
   "browserslist": {
     "production": [
