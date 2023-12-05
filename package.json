@@ -32,7 +32,7 @@
     "redux-thunk": "^2.3.0",
     "togpx": "rvillanueva/togpx#master",
     "uuid": "^3.3.3",
-    "vite": "^5.0.3",
+    "vite": "^5.0.5",
     "vitest": "^0.34.6"
   },
   "devDependencies": {
