@@ -1,4 +1,4 @@
 export default {
   mapboxPublicKey:
-    "pk.eyJ1IjoicnZpbGxhbnVldmEiLCJhIjoiY2swaWZzb2Z5MGJpNDNjcThzMXRhbW1mOSJ9.cJC55P3PbrPCgQuz7u88Sg",
+    "pk.eyJ1IjoicnZpbGxhbnVldmEiLCJhIjoiY2xycGFnZ21oMDJvYjJqb2J4b2Vvd3M4cSJ9.ohhY4wRS9cnD58Yt8XGwpQ",
 };
