@@ -9,11 +9,7 @@
     "vscode": {
       // Add the IDs of extensions you want installed when the container is created.
       "extensions": [
-        "Prisma.prisma",
-        "mtxr.sqltools-driver-pg",
-        "mtxr.sqltools",
-        "esbenp.prettier-vscode",
-        "eamodio.gitlens",
+        "oxc.oxc-vscode",
         "ZixuanChen.vitest-explorer",
         "bradlc.vscode-tailwindcss",
         "ms-playwright.playwright",

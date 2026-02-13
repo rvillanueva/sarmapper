@@ -43,6 +43,7 @@
     "@playwright/test": "^1.58.2",
     "@sentry/tanstackstart-react": "^10.22.0",
     "@tanstack/devtools-vite": "^0.3.11",
+    "@tanstack/nitro-v2-vite-plugin": "^1.154.7",
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.2.0",

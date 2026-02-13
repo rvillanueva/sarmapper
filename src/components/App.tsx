@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from "react";
 import "./App.css";
-import Sidebar from "./components/Sidebar/Sidebar";
+import Sidebar from "./Sidebar/Sidebar";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { useAppStore } from "./store/appStore";
-import searchMap from "./store/searchMap";
-import BehaviorProfiles from "./services/statistics/StatisticalBehaviorProfiles";
+import { useAppStore } from "../store/appStore";
+import searchMap from "../store/searchMap";
+import BehaviorProfiles from "../services/statistics/StatisticalBehaviorProfiles";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCaretRight, faCaretLeft } from "@fortawesome/free-solid-svg-icons";
 
