@@ -90,7 +90,6 @@ Vite is configured with the following plugins:
 ### `vitest.config.ts`
 
 - Environment: `jsdom`
-- Setup file: `tools/setupTests.ts`
 - Excludes: `node_modules`, `dist`, `e2e`, `build`
 
 ### `playwright.config.ts`

@@ -1,5 +1,5 @@
 import fileDownload from "js-file-download";
-import toGPX from "togpx";
+import GeoJsonToGpx from "@dwayneparton/geojson-to-gpx";
 import toKML from "@maphubs/tokml";
 import {
   createRingsLayer,
@@ -29,7 +29,7 @@ export function toGeoJSON(markers, behavior) {
     );
   }
   return {
-    type: "FeatureCollection",
+    type: "FeatureCollection" as const,
     features: features,
   };
 }
@@ -37,7 +37,8 @@ export function toGeoJSON(markers, behavior) {
 export function downloadGPX() {
   const { markers, behavior } = useAppStore.getState();
   const geoJSON = toGeoJSON(markers, behavior);
-  const gpx = toGPX(geoJSON);
+  const gpxDoc = GeoJsonToGpx(geoJSON);
+  const gpx = new XMLSerializer().serializeToString(gpxDoc);
   fileDownload(gpx, `${new Date().valueOf()}.gpx`);
 }
 
