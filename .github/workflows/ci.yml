@@ -15,18 +15,18 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
-          cache: yarn
-      - run: yarn install --frozen-lockfile
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
   e2e-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
-          cache: yarn
-      - run: yarn install --frozen-lockfile
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
   deploy-production:
     name: Deploy production
     if: ${{ github.ref == 'refs/heads/master' && github.event_name == 'push' }}
@@ -37,12 +37,12 @@ jobs:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
-          cache: yarn
-      - run: yarn install --frozen-lockfile
+          node-version: 24
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: Deploy webapp on render
         run: curl -X POST ${{ secrets.RENDER_DEPLOY_HOOK }}
