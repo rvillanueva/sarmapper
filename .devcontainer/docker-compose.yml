@@ -6,7 +6,7 @@ services:
       context: ..
       dockerfile: .devcontainer/Dockerfile
       args:
-        VARIANT: "20-bullseye"
+        VARIANT: "24-bullseye"
 
     volumes:
       - .:/workspace/.devcontainer
