@@ -3,7 +3,7 @@ import './App.css';
 import Sidebar from './components/Sidebar/Sidebar';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import {connect} from 'react-redux';
-import {bindActionCreators} from 'redux';
+import {bindActionCreators} from '@reduxjs/toolkit';
 import {setBehavior} from './actions/behaviorActions';
 import {downloadGPX} from './actions/downloadActions';
 import {updateMapCenter} from './actions/mapActions';

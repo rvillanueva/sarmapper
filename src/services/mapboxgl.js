@@ -1,6 +1,6 @@
 import mapboxgl from "mapbox-gl";
 import config from "../config/env";
 
-mapboxgl.access_token = config.mapboxPublicKey;
+mapboxgl.accessToken = config.mapboxPublicKey;
 
 export default mapboxgl;

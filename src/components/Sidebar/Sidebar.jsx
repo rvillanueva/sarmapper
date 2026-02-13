@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import LngLat from "../../services/LngLat";
-import { bindActionCreators } from "redux";
+import { bindActionCreators } from "@reduxjs/toolkit";
 import { connect } from "react-redux";
 import BehaviorProfiles from "../../services/statistics/StatisticalBehaviorProfiles";
 import { downloadGPX, downloadKML } from "../../actions/downloadActions";

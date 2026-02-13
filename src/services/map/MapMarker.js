@@ -1,6 +1,6 @@
 import mapboxgl from 'mapbox-gl';
 import config from '../../config/env';
-import UUIDV4 from 'uuid/v4';
+import { v4 as UUIDV4 } from 'uuid';
 
 mapboxgl.accessToken = config.mapboxPublicKey;
 

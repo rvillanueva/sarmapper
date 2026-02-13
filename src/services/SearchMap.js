@@ -6,7 +6,6 @@ import {updateIPPMarker, updateDestinationMarker, clearIPPMarker} from '../actio
 import {updateMapCenter} from '../actions/mapActions';
 import {setBehavior} from '../actions/behaviorActions';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
-import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.min.js';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import StatisticsVirtualLayer from './statistics/StatisticsVirtualLayer';
 import EventEmitter from 'events';

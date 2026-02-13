@@ -1,4 +1,4 @@
-import UUIDV4 from 'uuid/v4';
+import { v4 as UUIDV4 } from 'uuid';
 
 export default class MapStyleLayer {
   constructor(layer) {
