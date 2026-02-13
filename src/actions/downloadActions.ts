@@ -6,6 +6,7 @@ import {
   createDispersionLinesLayer,
   createDirectionLineLayer,
 } from "../services/statistics/geometry";
+import { useAppStore } from "../store/appStore";
 
 export function toGeoJSON(markers, behavior) {
   const ippLngLat = markers.byId.ipp ? markers.byId.ipp.lngLat : null;
@@ -34,19 +35,15 @@ export function toGeoJSON(markers, behavior) {
 }
 
 export function downloadGPX() {
-  return function (dispatch, getState) {
-    const { markers, behavior } = getState();
-    const geoJSON = toGeoJSON(markers, behavior);
-    const gpx = toGPX(geoJSON);
-    fileDownload(gpx, `${new Date().valueOf()}.gpx`);
-  };
+  const { markers, behavior } = useAppStore.getState();
+  const geoJSON = toGeoJSON(markers, behavior);
+  const gpx = toGPX(geoJSON);
+  fileDownload(gpx, `${new Date().valueOf()}.gpx`);
 }
 
 export function downloadKML() {
-  return function (dispatch, getState) {
-    const { markers, behavior } = getState();
-    const geoJSON = toGeoJSON(markers, behavior);
-    const kml = toKML(geoJSON);
-    fileDownload(kml, `${new Date().valueOf()}.kml`);
-  };
+  const { markers, behavior } = useAppStore.getState();
+  const geoJSON = toGeoJSON(markers, behavior);
+  const kml = toKML(geoJSON);
+  fileDownload(kml, `${new Date().valueOf()}.kml`);
 }

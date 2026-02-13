@@ -2,16 +2,11 @@ import mapboxgl from './mapboxgl';
 import LngLat from '../services/LngLat';
 import InitialPlanningMarker from '../services/InitialPlanningMarker';
 import DestinationMarker from '../services/DestinationMarker';
-import {updateIPPMarker, updateDestinationMarker, clearIPPMarker} from '../actions/markerActions';
-import {updateMapCenter} from '../actions/mapActions';
-import {setBehavior} from '../actions/behaviorActions';
 import MapboxGeocoder from '@mapbox/mapbox-gl-geocoder';
 import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import StatisticsVirtualLayer from './statistics/StatisticsVirtualLayer';
 import EventEmitter from 'events';
-import store from '../store';
-
-const {dispatch} = store;
+import { useAppStore } from '../store/appStore';
 
 export default class SearchMap extends EventEmitter {
   constructor() {
@@ -44,6 +39,10 @@ export default class SearchMap extends EventEmitter {
   }
   setIPPMarker = lngLat => {
     lngLat = new LngLat(lngLat);
+    const { setIppMarker } = useAppStore.getState();
+    const updateStore = () => {
+      setIppMarker([{ _id: 'ipp', lngLat: this.markers.ipp.getLngLat() }]);
+    };
     if(this.markers.ipp) {
       this.markers.ipp.setLngLat(lngLat.toJSON());
     } else {
@@ -55,36 +54,36 @@ export default class SearchMap extends EventEmitter {
       this.markers.ipp.setLngLat(lngLat.toJSON());
       this.markers.ipp.addTo(this.map);
       this.markers.ipp.on('dragstart', () => {
-        dispatch(updateIPPMarker(this.markers.ipp));
+        updateStore();
         this.statsLayer.clearRings();
         this.statsLayer.clearDispersion();
       });
       this.markers.ipp.on('drag', () => {
-        dispatch(updateIPPMarker(this.markers.ipp));
+        updateStore();
       })
       this.markers.ipp.on('dragend', () => {
         this.statsLayer.drawRings(this.markers.ipp, this.behavior);
         if(this.markers.destination) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
-        dispatch(updateIPPMarker(this.markers.ipp));
+        updateStore();
       });
     }
     this.statsLayer.drawRings(this.markers.ipp, this.behavior);
     if(this.markers.destination) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
-    dispatch(updateIPPMarker(this.markers.ipp));
+    updateStore();
   }
   clearIPPMarker = () => {
     if(this.markers.ipp) this.markers.ipp.remove();
     this.markers.ipp = null;
     this.statsLayer.clearRings();
     this.statsLayer.clearDispersion();
-    dispatch(clearIPPMarker());
+    useAppStore.getState().clearIppMarker();
   }
   flyTo = lngLat => {
     lngLat = new LngLat(lngLat);
     this.map.flyTo({
       center: lngLat.toJSON()
     });
-    dispatch(updateMapCenter(lngLat.toJSON()));
+    useAppStore.getState().setMapCenter(lngLat.toJSON());
   }
   getLngLat() {
     if(this.map) return this.map.getCenter();
@@ -106,10 +105,10 @@ export default class SearchMap extends EventEmitter {
       });
       this.markers.destination.on('dragend', (evt) => {
         if(this.markers.ipp) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
-        dispatch(updateDestinationMarker(this.markers.destination));
+        useAppStore.getState().setDirectionMarker([{ _id: 'direction', lngLat: this.markers.destination.getLngLat() }]);
       });
     }
-    dispatch(updateDestinationMarker(this.markers.destination));
+    useAppStore.getState().setDirectionMarker([{ _id: 'direction', lngLat: this.markers.destination.getLngLat() }]);
     if(this.markers.ipp) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
   }
   clearDestinationMarker() {
@@ -118,11 +117,11 @@ export default class SearchMap extends EventEmitter {
     }
     this.markers.destination = null;
     this.statsLayer.clearDispersion();
-    dispatch(updateDestinationMarker(null));
+    useAppStore.getState().clearDirectionMarker();
   }
   setBehavior(behavior) {
     this.behavior = behavior;
-    dispatch(setBehavior(behavior));
+    useAppStore.getState().setBehavior(behavior.toJSON());
     if(this.markers.ipp && this.markers.destination) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
     if(this.markers.ipp) this.statsLayer.drawRings(this.markers.ipp, this.behavior);
   }
