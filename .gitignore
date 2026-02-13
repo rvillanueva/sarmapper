@@ -28,3 +28,18 @@ yarn-error.log*
 env.js
 
 .pnpm-store
+
+node_modules
+.DS_Store
+dist
+dist-ssr
+*.local
+count.txt
+.env
+.nitro
+.tanstack
+.wrangler
+.output
+.vinxi
+__unconfig*
+todos.json
