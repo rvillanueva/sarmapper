@@ -6,7 +6,7 @@ WORKDIR /workspace
 RUN npm install -g pnpm
 
 ADD package.json /workspace
-ADD pnpm-lock.lock /workspace
+ADD pnpm-lock.yaml /workspace
 
 RUN pnpm install
 
