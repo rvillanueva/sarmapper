@@ -3,11 +3,11 @@ import { useAppStore } from "../../store/appStore";
 import BehaviorProfiles from "../../services/statistics/StatisticalBehaviorProfiles";
 import { downloadGPX, downloadKML } from "../../actions/downloadActions";
 import searchMap from "../../store/searchMap";
-import MarkerManager from "./components/MarkerManager";
-import SidebarSection from "./components/SidebarSection";
-import Subscribe from "./components/Subscribe";
-import ProfileSelector from "./components/ProfileSelector";
-import BehaviorStats from "./components/BehaviorStats";
+import MarkerManager from "../MarkerManager";
+import SidebarSection from "../SidebarSection";
+import Subscribe from "../Subscribe";
+import ProfileSelector from "../ProfileSelector";
+import BehaviorStats from "../BehaviorStats";
 import "./sidebar.css";
 
 interface SidebarProps {
