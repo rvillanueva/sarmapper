@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import LngLat from "../../services/LngLat";
 import { bindActionCreators } from "@reduxjs/toolkit";
 import { connect } from "react-redux";
@@ -145,13 +144,6 @@ class Sidebar extends React.Component {
     );
   }
 }
-
-Sidebar.propTypes = {
-  isOpen: PropTypes.bool,
-  ipp: PropTypes.object,
-  direction: PropTypes.object,
-  behavior: PropTypes.object,
-};
 
 function mapStateToProps(state) {
   return {
