@@ -1,68 +1,126 @@
 # Search and Rescue Mapper
 
-## Available Scripts
+A mapping tool for search and rescue operations, built with statistical behavior profiles and interactive Mapbox-powered maps.
 
-In the project directory, you can run:
+## Tech Stack
 
-### `npm start`
+- **Framework** -- [TanStack Start](https://tanstack.com/start) (React 19, file-based routing)
+- **Build** -- [Vite 7](https://vite.dev/) with [Nitro](https://nitro.build/) server
+- **Styling** -- [Tailwind CSS 4](https://tailwindcss.com/)
+- **State Management** -- [Zustand](https://zustand-demo.pmnd.rs/)
+- **Maps** -- [Mapbox GL JS](https://docs.mapbox.com/mapbox-gl-js/)
+- **Monitoring** -- [Sentry](https://sentry.io/) (via `@sentry/tanstackstart-react`)
+- **Testing** -- [Vitest](https://vitest.dev/) (unit) + [Playwright](https://playwright.dev/) (e2e)
+- **Linting / Formatting** -- [oxlint](https://oxc.rs/docs/guide/usage/linter) + [oxfmt](https://oxc.rs/)
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Prerequisites
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+- Node.js >= 20
 
-### `npm test`
+## Getting Started
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Install dependencies**
 
-### `npm run build`
+   ```bash
+   npm install
+   ```
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+2. **Configure environment variables**
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+   Create a `.env.local` file in the project root with the following (optional) variable:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+   ```dotenv
+   VITE_SENTRY_DSN=<your-sentry-dsn>
+   ```
 
-### `npm run eject`
+   If `VITE_SENTRY_DSN` is not set, Sentry will be disabled and a warning will be logged on startup.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+3. **Start the dev server**
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   ```bash
+   npm run dev
+   ```
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+   Opens at [http://localhost:3000](http://localhost:3000). The page hot-reloads on file changes.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+## Scripts
 
-## Learn More
+| Command             | Description                                                                 |
+| ------------------- | --------------------------------------------------------------------------- |
+| `npm run dev`       | Start the Vite dev server on port 3000 (with Sentry instrumentation)        |
+| `npm run build`     | Build for production (outputs to `.output/`)                                |
+| `npm run preview`   | Preview the production build locally                                        |
+| `npm start`         | Run the production server from `.output/server/index.mjs`                   |
+| `npm test`          | Run unit tests with Vitest                                                  |
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Project Structure
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+├── e2e/                    # Playwright end-to-end tests
+├── src/
+│   ├── actions/            # Server actions (e.g. downloads)
+│   ├── components/         # React components (App, Navbar, Map, etc.)
+│   ├── config/             # App configuration (env, Mapbox keys)
+│   ├── data/               # Static data / datasets
+│   ├── lib/                # Shared library utilities
+│   ├── routes/             # TanStack file-based routes
+│   ├── services/           # Domain services (statistics, geometry)
+│   ├── store/              # Zustand stores
+│   └── utils/              # General-purpose utilities
+├── tools/                  # Test setup and tooling scripts
+├── vite.config.ts          # Vite + TanStack Start + Tailwind config
+├── vitest.config.ts        # Vitest unit test config
+├── playwright.config.ts    # Playwright e2e test config
+└── tsconfig.json           # TypeScript configuration
+```
 
-### Code Splitting
+## Configuration Files
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
+### `vite.config.ts`
 
-### Analyzing the Bundle Size
+Vite is configured with the following plugins:
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
+- `@tanstack/react-start` -- SSR-capable file-based routing
+- `@tanstack/devtools-vite` -- TanStack DevTools
+- `@tanstack/nitro-v2-vite-plugin` -- Nitro server integration
+- `@vitejs/plugin-react` -- React Fast Refresh
+- `@tailwindcss/vite` -- Tailwind CSS compilation
+- `vite-tsconfig-paths` -- Resolve TypeScript path aliases (`@/*` -> `./src/*`)
 
-### Making a Progressive Web App
+### `vitest.config.ts`
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
+- Environment: `jsdom`
+- Setup file: `tools/setupTests.ts`
+- Excludes: `node_modules`, `dist`, `e2e`, `build`
 
-### Advanced Configuration
+### `playwright.config.ts`
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
+- Test directory: `./e2e`
+- Base URL: `http://localhost:3000`
+- Runs `yarn preview` as the web server before tests
+- CI-specific settings for retries, workers, tracing, and video capture
 
-### Deployment
+### `tsconfig.json`
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
+- Target: ES2022, JSX: `react-jsx`
+- Module resolution: `bundler`
+- Strict mode enabled
+- Path alias: `@/*` maps to `./src/*`
 
-### `npm run build` fails to minify
+## Testing
 
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+### Unit Tests
+
+```bash
+npm test
+```
+
+Runs all unit tests via Vitest with jsdom environment.
+
+### End-to-End Tests
+
+```bash
+npx playwright test
+```
+
+Runs Playwright tests from the `e2e/` directory against a local preview server.
