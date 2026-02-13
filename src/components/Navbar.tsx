@@ -64,21 +64,10 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
 
   return (
     <>
-      <nav className="flex items-center justify-between bg-white border-b border-gray-200 px-3 py-2 shadow-sm z-50">
-        <div className="flex flex-col min-w-0 mr-2">
-          <h1 className="text-base font-bold text-gray-800 leading-tight truncate">
-            Lost Person Behavior Mapper
-          </h1>
-          <span className="text-xs text-gray-500">
-            by{" "}
-            <a
-              href="mailto:ryan@sarmapper.org"
-              className="hover:underline text-gray-500"
-            >
-              Ryan Villanueva
-            </a>
-          </span>
-        </div>
+      <nav className="flex items-center justify-between bg-white border-b border-gray-200 px-6 py-1 shadow-sm z-50">
+        <h1 className="text-sm font-bold text-gray-600 truncate mr-2">
+          Lost Person Behavior Mapper
+        </h1>
         <div className="flex items-center gap-1">
           {navItems.map(({ id, label, icon: Icon }) => (
             <button
