@@ -1,15 +1,97 @@
 @import "tailwindcss";
 
-body {
-  @apply m-0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
-    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
+
+:root {
+  --plk-white: #fff;
+  --plk-snow: #fafafa;
+  --plk-silver-light: #f2f1ef;
+  --plk-silver: #e8e6e1;
+  --plk-aluminum: #d1cec7;
+  --plk-warm-gray: #a09a90;
+  --plk-slate: #6e6960;
+  --plk-charcoal: #3a3632;
+  --plk-black: #1a1816;
+  --plk-orange: #e25b2a;
+  --plk-orange-soft: #f0a07a;
+  --plk-orange-tint: #e25b2a0f;
+  --plk-rule: #1a18160f;
+  --plk-rule-med: #1a18161a;
+  --plk-rule-strong: #1a181629;
+
+  --plk-fg-1: var(--plk-black);
+  --plk-fg-2: var(--plk-charcoal);
+  --plk-fg-3: var(--plk-slate);
+  --plk-fg-4: var(--plk-warm-gray);
+  --plk-fg-5: var(--plk-aluminum);
+  --plk-bg-1: var(--plk-white);
+  --plk-bg-2: var(--plk-snow);
+  --plk-bg-3: var(--plk-silver-light);
+
+  --plk-font-display: "Instrument Serif", "Times New Roman", serif;
+  --plk-font-body: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --plk-font-mono: "DM Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  --plk-radius-sm: 2px;
+  --plk-radius: 3px;
+  --plk-radius-md: 4px;
+  --plk-radius-lg: 6px;
+
+  --plk-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  --plk-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
-    monospace;
+@theme {
+  --font-sans: "Hanken Grotesk", system-ui, -apple-system, sans-serif;
+  --font-serif: "Instrument Serif", "Times New Roman", serif;
+  --font-mono: "DM Mono", "JetBrains Mono", ui-monospace, monospace;
+
+  --color-snow: #fafafa;
+  --color-silver-light: #f2f1ef;
+  --color-silver: #e8e6e1;
+  --color-aluminum: #d1cec7;
+  --color-warm-gray: #a09a90;
+  --color-slate-warm: #6e6960;
+  --color-charcoal: #3a3632;
+  --color-ink: #1a1816;
+  --color-orange-brand: #e25b2a;
+  --color-orange-soft: #f0a07a;
+  --color-orange-tint: #e25b2a0f;
+  --color-rule: #1a18160f;
+  --color-rule-med: #1a18161a;
+  --color-rule-strong: #1a181629;
+
+  --radius-xs: 2px;
+  --radius-sm: 3px;
+  --radius-md: 4px;
+  --radius-lg: 6px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--plk-font-body);
+  font-weight: 300;
+  color: var(--plk-fg-1);
+  background: var(--plk-bg-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-feature-settings: "kern", "liga";
+}
+
+code,
+.font-mono,
+.mono {
+  font-family: var(--plk-font-mono);
+}
+
+.font-display {
+  font-family: var(--plk-font-display);
+  font-weight: 400;
+  letter-spacing: -0.015em;
+}
+
+/* Subtle focus ring matching brand */
+*:focus-visible {
+  outline: 1px solid var(--plk-orange);
+  outline-offset: 2px;
 }

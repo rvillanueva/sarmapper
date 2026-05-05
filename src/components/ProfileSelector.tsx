@@ -30,11 +30,11 @@ function BehaviorSelector({profiles, behavior, setBehaviorByKeys}) {
       </option>);
     const selector = (
       <div className="flex items-center gap-3 mb-2" key={levels[l]}>
-        <label className="w-24 shrink-0 text-sm font-medium text-gray-600">
+        <label className="w-28 shrink-0 font-mono text-[10px] uppercase tracking-[0.14em] text-warm-gray">
           {levelNames[levels[l]]}
         </label>
         <select
-          className="flex-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-700 shadow-sm outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-300 cursor-pointer"
+          className="flex-1 rounded-sm border border-rule-strong bg-white px-3 py-2 text-[13px] text-charcoal outline-none focus:border-charcoal transition-colors cursor-pointer font-light"
           value={behavior.hierarchy[l]}
           onChange={evt => handleChange(l, evt.target.value)}>
           {options}

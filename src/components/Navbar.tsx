@@ -23,6 +23,14 @@ const navItems = [
   { id: "about" as const, label: "About", icon: Info },
 ];
 
+const modalPanelBase =
+  "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-101 bg-white border border-rule-strong rounded-md shadow-[0_8px_32px_rgba(0,0,0,0.10),0_1px_3px_rgba(0,0,0,0.04)] w-[calc(100vw-2rem)] max-h-[80vh] overflow-y-auto p-7";
+
+const modalPanelClass = `${modalPanelBase} max-w-md`;
+
+const eyebrowClass =
+  "font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray font-normal";
+
 export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
@@ -64,41 +72,48 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
 
   return (
     <>
-      <nav className="flex items-center justify-between bg-white border-b border-gray-200 px-6 py-1 shadow-sm z-50">
-        <h1 className="text-sm font-bold text-gray-600 truncate mr-2">
-          Lost Person Behavior Mapper
-        </h1>
+      <nav className="flex items-center justify-between bg-white border-b border-rule px-6 py-1 z-50">
+        <div className="flex items-baseline gap-3 min-w-0">
+          <h1 className="font-serif text-lg text-ink truncate m-0 leading-[1.25] pb-0.5 tracking-[-0.015em]">
+            Lost Person Behavior Mapper
+          </h1>
+        </div>
         <div className="flex items-center gap-1">
-          {navItems.map(({ id, label, icon: Icon }) => (
-            <button
-              key={id}
-              onClick={() => openModal(id)}
-              className={`flex items-center gap-1.5 px-3 py-2 min-h-[44px] min-w-[44px] rounded-lg text-sm font-medium transition-colors cursor-pointer
-                ${
-                  activeModal === id
-                    ? "bg-gray-800 text-white"
-                    : "text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+          {navItems.map(({ id, label, icon: Icon }) => {
+            const active = activeModal === id;
+            return (
+              <button
+                key={id}
+                onClick={() => openModal(id)}
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-sm font-mono text-[11px] uppercase tracking-[0.12em] transition-colors duration-150 cursor-pointer ${
+                  active
+                    ? "bg-ink text-white"
+                    : "bg-white text-charcoal hover:bg-snow"
                 }`}
-              aria-label={label}
-            >
-              <Icon size={18} />
-              <span className="hidden sm:inline">{label}</span>
-            </button>
-          ))}
+                aria-label={label}
+              >
+                <Icon size={14} strokeWidth={1.75} />
+                <span className="hidden sm:inline">{label}</span>
+              </button>
+            );
+          })}
         </div>
       </nav>
 
       {/* Markers Modal */}
       <Dialog.Root open={activeModal === "markers"} onOpenChange={handleOpenChange}>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100" />
-          <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-101 bg-white rounded-xl shadow-2xl w-[calc(100vw-2rem)] max-w-md max-h-[80vh] overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Dialog.Title className="text-lg font-semibold text-gray-900 m-0">
-                Markers
-              </Dialog.Title>
-              <Dialog.Close className="p-1 rounded-md hover:bg-gray-100 text-gray-500 hover:text-gray-700 cursor-pointer">
-                <X size={20} />
+          <Dialog.Backdrop className="fixed inset-0 bg-ink/30 backdrop-blur-[2px] z-100" />
+          <Dialog.Popup className={modalPanelClass}>
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-rule">
+              <div>
+                <div className={eyebrowClass + " mb-1"}>Section 01</div>
+                <Dialog.Title className="font-serif text-2xl text-ink m-0 leading-none">
+                  Markers
+                </Dialog.Title>
+              </div>
+              <Dialog.Close className="p-1 rounded-sm hover:bg-silver-light text-warm-gray hover:text-charcoal cursor-pointer transition-colors">
+                <X size={18} strokeWidth={1.5} />
               </Dialog.Close>
             </div>
             <div className="space-y-4">
@@ -126,14 +141,17 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
       {/* Statistical Behavior Modal */}
       <Dialog.Root open={activeModal === "behavior"} onOpenChange={handleOpenChange}>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100" />
-          <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-101 bg-white rounded-xl shadow-2xl w-[calc(100vw-2rem)] max-w-md max-h-[80vh] overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Dialog.Title className="text-lg font-semibold text-gray-900 m-0">
-                Statistical Behavior
-              </Dialog.Title>
-              <Dialog.Close className="p-1 rounded-md hover:bg-gray-100 text-gray-500 hover:text-gray-700 cursor-pointer">
-                <X size={20} />
+          <Dialog.Backdrop className="fixed inset-0 bg-ink/30 backdrop-blur-[2px] z-100" />
+          <Dialog.Popup className={modalPanelClass}>
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-rule">
+              <div>
+                <div className={eyebrowClass + " mb-1"}>Section 02</div>
+                <Dialog.Title className="font-serif text-2xl text-ink m-0 leading-none">
+                  Statistical Behavior
+                </Dialog.Title>
+              </div>
+              <Dialog.Close className="p-1 rounded-sm hover:bg-silver-light text-warm-gray hover:text-charcoal cursor-pointer transition-colors">
+                <X size={18} strokeWidth={1.5} />
               </Dialog.Close>
             </div>
             <div>
@@ -145,15 +163,15 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
                 />
               ) : null}
               {behavior ? <BehaviorStats behavior={behavior} /> : null}
-              <div className="mt-2 text-xs text-gray-500 leading-snug">
-                Source:{" "}
+              <div className="mt-5 pt-4 border-t border-rule font-mono text-[10px] tracking-[0.06em] uppercase text-warm-gray leading-relaxed">
+                Source —{" "}
                 <a
                   href="https://www.dbs-sar.com/SAR_Research/ISRID.htm"
-                  className="underline"
+                  className="text-orange-brand hover:text-charcoal transition-colors"
                 >
-                  International Search &amp; Rescue Database
+                  Intl. Search &amp; Rescue Database
                 </a>{" "}
-                (2011)
+                / 2011
               </div>
             </div>
           </Dialog.Popup>
@@ -163,28 +181,31 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
       {/* Export Modal */}
       <Dialog.Root open={activeModal === "export"} onOpenChange={handleOpenChange}>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100" />
-          <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-101 bg-white rounded-xl shadow-2xl w-[calc(100vw-2rem)] max-w-sm max-h-[80vh] overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Dialog.Title className="text-lg font-semibold text-gray-900 m-0">
-                Export
-              </Dialog.Title>
-              <Dialog.Close className="p-1 rounded-md hover:bg-gray-100 text-gray-500 hover:text-gray-700 cursor-pointer">
-                <X size={20} />
+          <Dialog.Backdrop className="fixed inset-0 bg-ink/30 backdrop-blur-[2px] z-100" />
+          <Dialog.Popup className={`${modalPanelBase} max-w-sm`}>
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-rule">
+              <div>
+                <div className={eyebrowClass + " mb-1"}>Section 03</div>
+                <Dialog.Title className="font-serif text-2xl text-ink m-0 leading-none">
+                  Export
+                </Dialog.Title>
+              </div>
+              <Dialog.Close className="p-1 rounded-sm hover:bg-silver-light text-warm-gray hover:text-charcoal cursor-pointer transition-colors">
+                <X size={18} strokeWidth={1.5} />
               </Dialog.Close>
             </div>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-2">
               <button
                 onClick={downloadGPX}
-                className="w-full px-4 py-2.5 rounded-lg bg-gray-800 text-white font-medium text-sm hover:bg-gray-700 transition-colors cursor-pointer"
+                className="w-full px-4 py-3 rounded-sm bg-ink text-white font-mono text-[11px] uppercase tracking-[0.14em] hover:bg-charcoal transition-colors cursor-pointer"
               >
-                Download GPX
+                Download · GPX
               </button>
               <button
                 onClick={downloadKML}
-                className="w-full px-4 py-2.5 rounded-lg bg-gray-800 text-white font-medium text-sm hover:bg-gray-700 transition-colors cursor-pointer"
+                className="w-full px-4 py-3 rounded-sm border border-rule-strong bg-white text-charcoal font-mono text-[11px] uppercase tracking-[0.14em] hover:bg-snow hover:border-charcoal transition-colors cursor-pointer"
               >
-                Download KML
+                Download · KML
               </button>
             </div>
           </Dialog.Popup>
@@ -194,50 +215,60 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
       {/* About Modal */}
       <Dialog.Root open={activeModal === "about"} onOpenChange={handleOpenChange}>
         <Dialog.Portal>
-          <Dialog.Backdrop className="fixed inset-0 bg-black/40 backdrop-blur-sm z-100" />
-          <Dialog.Popup className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-101 bg-white rounded-xl shadow-2xl w-[calc(100vw-2rem)] max-w-md max-h-[80vh] overflow-y-auto p-6">
-            <div className="flex items-center justify-between mb-4">
-              <Dialog.Title className="text-lg font-semibold text-gray-900 m-0">
-                About
-              </Dialog.Title>
-              <Dialog.Close className="p-1 rounded-md hover:bg-gray-100 text-gray-500 hover:text-gray-700 cursor-pointer">
-                <X size={20} />
+          <Dialog.Backdrop className="fixed inset-0 bg-ink/30 backdrop-blur-[2px] z-100" />
+          <Dialog.Popup className={modalPanelClass}>
+            <div className="flex items-center justify-between mb-5 pb-4 border-b border-rule">
+              <div>
+                <div className={eyebrowClass + " mb-1"}>Colophon</div>
+                <Dialog.Title className="font-serif text-2xl text-ink m-0 leading-none">
+                  About
+                </Dialog.Title>
+              </div>
+              <Dialog.Close className="p-1 rounded-sm hover:bg-silver-light text-warm-gray hover:text-charcoal cursor-pointer transition-colors">
+                <X size={18} strokeWidth={1.5} />
               </Dialog.Close>
             </div>
-            <div className="text-sm text-gray-600 space-y-3 leading-relaxed">
-              <p>
+            <div className="text-[14.5px] text-slate-warm space-y-4 leading-relaxed font-light">
+              <p className="m-0">
                 Interface and visualization designed by{" "}
-                <a href="mailto:ryan@sarmapper.org" className="underline">
+                <a
+                  href="mailto:ryan@sarmapper.org"
+                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
+                >
                   Ryan Villanueva
                 </a>
                 .
               </p>
-              <p>
+              <p className="m-0">
                 Statistical behavior data from{" "}
-                <a href="http://www.dbs-sar.com/" className="underline">
+                <a
+                  href="http://www.dbs-sar.com/"
+                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
+                >
                   Lost Person Behavior
                 </a>{" "}
                 by Robert Koester.
               </p>
-              <p>
+              <p className="m-0">
                 Open source code available on{" "}
                 <a
                   href="https://github.com/rvillanueva/sarmapper"
-                  className="underline"
+                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
                 >
                   Github
                 </a>
                 .
               </p>
-              <p className="text-xs text-gray-400">
-                The Lost Person Behavior Mapper does not guarantee that the
-                information provided is 100% accurate. It is intended to be used
-                as a supplemental tool for Search and Rescue efforts and cannot
-                replace other search techniques. If you have a missing person to
-                report, please contact your local law enforcement immediately.
+              <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-warm-gray leading-loose m-0 pt-3 border-t border-rule">
+                The Lost Person Behavior Mapper does not guarantee the
+                information provided is fully accurate. It is intended as a
+                supplemental tool for Search and Rescue efforts and cannot
+                replace other techniques. To report a missing person, contact
+                local law enforcement immediately.
               </p>
-              <hr className="border-gray-200" />
-              <Subscribe />
+              <div className="pt-4 border-t border-rule">
+                <Subscribe />
+              </div>
             </div>
           </Dialog.Popup>
         </Dialog.Portal>
