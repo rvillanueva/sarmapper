@@ -23,8 +23,10 @@ const navItems = [
   { id: "about" as const, label: "About", icon: Info },
 ];
 
-const modalPanelClass =
-  "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-101 bg-white border border-rule-strong rounded-md shadow-[0_8px_32px_rgba(0,0,0,0.10),0_1px_3px_rgba(0,0,0,0.04)] w-[calc(100vw-2rem)] max-w-md max-h-[80vh] overflow-y-auto p-7";
+const modalPanelBase =
+  "fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-101 bg-white border border-rule-strong rounded-md shadow-[0_8px_32px_rgba(0,0,0,0.10),0_1px_3px_rgba(0,0,0,0.04)] w-[calc(100vw-2rem)] max-h-[80vh] overflow-y-auto p-7";
+
+const modalPanelClass = `${modalPanelBase} max-w-md`;
 
 const eyebrowClass =
   "font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray font-normal";
@@ -180,7 +182,7 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
       <Dialog.Root open={activeModal === "export"} onOpenChange={handleOpenChange}>
         <Dialog.Portal>
           <Dialog.Backdrop className="fixed inset-0 bg-ink/30 backdrop-blur-[2px] z-100" />
-          <Dialog.Popup className={modalPanelClass + " max-w-sm"}>
+          <Dialog.Popup className={`${modalPanelBase} max-w-sm`}>
             <div className="flex items-center justify-between mb-5 pb-4 border-b border-rule">
               <div>
                 <div className={eyebrowClass + " mb-1"}>Section 03</div>

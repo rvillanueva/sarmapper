@@ -90,16 +90,6 @@ code,
   letter-spacing: -0.015em;
 }
 
-/* Eyebrow-style mono labels */
-.eyebrow {
-  font-family: var(--plk-font-mono);
-  font-size: 10px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--plk-fg-4);
-  font-weight: 400;
-}
-
 /* Subtle focus ring matching brand */
 *:focus-visible {
   outline: 1px solid var(--plk-orange);
