@@ -59,20 +59,22 @@ export default function MarkerManager({ name, lngLat, setLngLat, remove, flyTo, 
   }
 
   return (
-    <div className="rounded-lg border border-gray-200 bg-gray-50 p-3">
-      <span className="text-sm font-semibold text-gray-800">{name}</span>
+    <div className="rounded-sm border border-rule bg-snow p-4">
+      <div className="font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray mb-3">
+        {name}
+      </div>
       {lngLat ? (
-        <div className="mt-2 space-y-2">
+        <div className="space-y-3">
           <div className="flex items-center gap-2">
             <input
-              className="flex-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm text-gray-700 shadow-sm outline-none focus:border-gray-400 focus:ring-1 focus:ring-gray-300"
+              className="flex-1 rounded-sm border border-rule-strong bg-white px-3 py-2 font-mono text-[12px] text-charcoal outline-none focus:border-charcoal transition-colors"
               value={lngLatInput}
               onChange={(evt) => handleInputChange(evt.target.value)}
             />
             {lngLatInputIsDirty && (
               <button
                 onClick={setLngLatFromInput}
-                className="rounded-md bg-gray-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700 transition-colors cursor-pointer"
+                className="rounded-sm bg-ink px-3 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white hover:bg-charcoal transition-colors cursor-pointer"
               >
                 Update
               </button>
@@ -81,19 +83,19 @@ export default function MarkerManager({ name, lngLat, setLngLat, remove, flyTo, 
           <div className="flex items-center gap-2">
             <button
               onClick={() => setLngLat(mapLngLat)}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              className="rounded-sm border border-rule-strong bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-charcoal hover:border-charcoal hover:bg-snow transition-colors cursor-pointer"
             >
               Set Here
             </button>
             <button
               onClick={() => flyTo(lngLat)}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors cursor-pointer"
+              className="rounded-sm border border-rule-strong bg-white px-3 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-charcoal hover:border-charcoal hover:bg-snow transition-colors cursor-pointer"
             >
               Go To
             </button>
             <button
               onClick={remove}
-              className="rounded-md border border-red-200 bg-white px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 transition-colors cursor-pointer"
+              className="rounded-sm border border-transparent bg-transparent px-3 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-orange-brand hover:bg-orange-tint transition-colors cursor-pointer ml-auto"
             >
               Clear
             </button>
@@ -102,9 +104,9 @@ export default function MarkerManager({ name, lngLat, setLngLat, remove, flyTo, 
       ) : (
         <button
           onClick={() => setLngLat(mapLngLat)}
-          className="mt-2 rounded-md bg-gray-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-700 transition-colors cursor-pointer"
+          className="rounded-sm bg-ink px-4 py-2 font-mono text-[10px] uppercase tracking-[0.14em] text-white hover:bg-charcoal transition-colors cursor-pointer"
         >
-          Add
+          + Add Marker
         </button>
       )}
     </div>

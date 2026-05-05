@@ -38,8 +38,8 @@ export default class RangeRing {
       'source': this.getGeoJSON(),
       'layout': {},
       'paint': {
-        'line-color': 'rgb(209, 79, 79)',
-        'line-width': 2,
+        'line-color': '#e25b2a',
+        'line-width': 1.5,
         'line-opacity': 0.8
       }
     }

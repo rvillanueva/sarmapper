@@ -26,9 +26,9 @@ export function createRingsLayer(ippLngLat, behavior) {
     },
     'layout': {},
     'paint': {
-      'line-color': 'rgb(209, 79, 79)',
-      'line-width': 2,
-      'line-opacity': 0.5
+      'line-color': '#e25b2a',
+      'line-width': 1.5,
+      'line-opacity': 0.6
     }
   })
 }
@@ -62,7 +62,7 @@ export function createRingLabelsLayer(ippLngLat, behavior) {
       'text-size': 14
     },
     "paint": {
-      'text-color': '#343434',
+      'text-color': '#3a3632',
       'text-halo-color': '#ffffff',
       'text-halo-width': 2
     }
@@ -92,9 +92,9 @@ export function createDirectionLineLayer(ippLngLat, directionLngLat) {
     },
     'layout': {},
     'paint': {
-      'line-color': 'rgb(215, 134, 59)',
-      'line-width': 3,
-      'line-opacity': 0.8
+      'line-color': '#3a3632',
+      'line-width': 2,
+      'line-opacity': 0.7
     }
   })
 }
@@ -136,9 +136,9 @@ export function createDispersionLinesLayer(ippLngLat, destinationLngLat, behavio
     },
     'layout': {},
     'paint': {
-      'line-color': 'rgb(215, 134, 59)',
-      'line-width': 2,
-      'line-opacity': 0.4
+      'line-color': '#6e6960',
+      'line-width': 1,
+      'line-opacity': 0.45
     }
   })
 }
