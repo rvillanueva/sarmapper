@@ -70,9 +70,9 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
 
   return (
     <>
-      <nav className="flex items-center justify-between bg-white border-b border-rule px-6 py-2.5 z-50">
+      <nav className="flex items-center justify-between bg-white border-b border-rule px-6 py-1 z-50">
         <div className="flex items-baseline gap-3 min-w-0">
-          <h1 className="font-serif text-xl text-ink truncate m-0 leading-[1.25] pb-0.5 tracking-[-0.015em]">
+          <h1 className="font-serif text-lg text-ink truncate m-0 leading-[1.25] pb-0.5 tracking-[-0.015em]">
             Lost Person Behavior Mapper
           </h1>
         </div>
@@ -83,7 +83,7 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
               <button
                 key={id}
                 onClick={() => openModal(id)}
-                className={`flex items-center gap-2 px-3 py-2 min-h-[40px] rounded-sm font-mono text-[11px] uppercase tracking-[0.12em] transition-colors duration-150 cursor-pointer ${
+                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-sm font-mono text-[11px] uppercase tracking-[0.12em] transition-colors duration-150 cursor-pointer ${
                   active
                     ? "bg-ink text-white"
                     : "bg-white text-charcoal hover:bg-snow"
