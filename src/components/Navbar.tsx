@@ -72,12 +72,9 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
     <>
       <nav className="flex items-center justify-between bg-white border-b border-rule px-6 py-2.5 z-50">
         <div className="flex items-baseline gap-3 min-w-0">
-          <h1 className="font-serif text-xl text-ink truncate m-0 leading-none tracking-[-0.015em]">
+          <h1 className="font-serif text-xl text-ink truncate m-0 leading-[1.25] pb-0.5 tracking-[-0.015em]">
             Lost Person Behavior Mapper
           </h1>
-          <span className="hidden md:inline font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray">
-            SAR&nbsp;//&nbsp;Mapper
-          </span>
         </div>
         <div className="flex items-center gap-1">
           {navItems.map(({ id, label, icon: Icon }) => {
@@ -86,10 +83,10 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
               <button
                 key={id}
                 onClick={() => openModal(id)}
-                className={`flex items-center gap-2 px-3 py-2 min-h-[40px] rounded-sm font-mono text-[11px] uppercase tracking-[0.12em] transition-all duration-150 cursor-pointer border ${
+                className={`flex items-center gap-2 px-3 py-2 min-h-[40px] rounded-sm font-mono text-[11px] uppercase tracking-[0.12em] transition-colors duration-150 cursor-pointer ${
                   active
-                    ? "bg-ink text-white border-ink"
-                    : "bg-white text-charcoal border-transparent hover:border-rule-strong hover:bg-snow"
+                    ? "bg-ink text-white"
+                    : "bg-white text-charcoal hover:bg-snow"
                 }`}
                 aria-label={label}
               >
