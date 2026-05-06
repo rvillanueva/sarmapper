@@ -7,6 +7,7 @@ import '@mapbox/mapbox-gl-geocoder/dist/mapbox-gl-geocoder.css';
 import StatisticsVirtualLayer from './statistics/StatisticsVirtualLayer';
 import EventEmitter from 'events';
 import { useAppStore } from '../store/appStore';
+import { DEFAULT_MAP_STYLE } from './map/mapStyles';
 
 export default class SearchMap extends EventEmitter {
   constructor() {
@@ -21,7 +22,7 @@ export default class SearchMap extends EventEmitter {
   load(containerId, lngLat) {
     this.map = new mapboxgl.Map({
       container: containerId,
-      style: 'mapbox://styles/mapbox/outdoors-v11',
+      style: DEFAULT_MAP_STYLE.url,
       center: new LngLat(lngLat).toJSON(),
       zoom: 10
     });
