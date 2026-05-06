@@ -8,25 +8,27 @@ import {
 } from "../services/statistics/geometry";
 import { useAppStore } from "../store/appStore";
 
-export function toGeoJSON(markers, behavior) {
+export function toGeoJSON(markers: any, behavior: any) {
   const ippLngLat = markers.byId.ipp ? markers.byId.ipp.lngLat : null;
   const destinationLngLat = markers.byId.direction
     ? markers.byId.direction.lngLat
     : null;
-  let features = createRingsLayer(ippLngLat, behavior).toJSON().source.data
-    .features;
+  const ringsSource = createRingsLayer(ippLngLat, behavior).toJSON().source as {
+    data: { features: any[] };
+  };
+  let features: any[] = ringsSource.data.features;
   if (destinationLngLat) {
-    features = features.concat(
-      createDispersionLinesLayer(
-        ippLngLat,
-        destinationLngLat,
-        behavior,
-      ).toJSON().source.data.features,
-    );
-    features = features.concat(
-      createDirectionLineLayer(ippLngLat, destinationLngLat).toJSON().source
-        .data,
-    );
+    const dispersionSource = createDispersionLinesLayer(
+      ippLngLat,
+      destinationLngLat,
+      behavior,
+    ).toJSON().source as { data: { features: any[] } };
+    features = features.concat(dispersionSource.data.features);
+    const directionSource = createDirectionLineLayer(
+      ippLngLat,
+      destinationLngLat,
+    ).toJSON().source as { data: any };
+    features = features.concat(directionSource.data);
   }
   return {
     type: "FeatureCollection" as const,

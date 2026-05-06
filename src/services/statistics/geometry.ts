@@ -1,18 +1,22 @@
 import RangeRing from './RangeRing';
-import LngLat from '../LngLat';
-import StatisticalBehavior from './StatisticalBehavior';
+import LngLat, { type LngLatInput } from '../LngLat';
+import StatisticalBehavior, { type BehaviorData } from './StatisticalBehavior';
 import MapStyleLayer from '../map/MapStyleLayer';
 
-export function getRangeRings(ippLngLat, behavior) {
+export function getRangeRings(ippLngLat: LngLatInput, behavior: BehaviorData | StatisticalBehavior) {
   const distanceLabels = ['25%', '50%', '75%', '95%'];
-  behavior = new StatisticalBehavior(behavior);
-  return behavior.getDistanceProbabilities()
+  const stats = behavior instanceof StatisticalBehavior
+    ? behavior
+    : new StatisticalBehavior(behavior);
+  return stats.getDistanceProbabilities()
     .map((distance, d) => new RangeRing(ippLngLat, distance.value * 1000, distanceLabels[d]));
 }
 
-export function createRingsLayer(ippLngLat, behavior) {
-  behavior = new StatisticalBehavior(behavior);
-  const rings = getRangeRings(ippLngLat, behavior);
+export function createRingsLayer(ippLngLat: LngLatInput, behavior: BehaviorData | StatisticalBehavior) {
+  const stats = behavior instanceof StatisticalBehavior
+    ? behavior
+    : new StatisticalBehavior(behavior);
+  const rings = getRangeRings(ippLngLat, stats);
   const ringFeatures = rings.map(ring => ring.getGeoJSON().data);
   return new MapStyleLayer({
     'id': 'rings',
@@ -21,57 +25,57 @@ export function createRingsLayer(ippLngLat, behavior) {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: ringFeatures
-      }
+        features: ringFeatures,
+      },
     },
     'layout': {},
     'paint': {
       'line-color': '#e25b2a',
       'line-width': 1.5,
-      'line-opacity': 0.6
-    }
-  })
+      'line-opacity': 0.6,
+    },
+  });
 }
 
-export function createRingLabelsLayer(ippLngLat, behavior) {
+export function createRingLabelsLayer(ippLngLat: LngLatInput, behavior: BehaviorData | StatisticalBehavior) {
   const rings = getRangeRings(ippLngLat, behavior);
   const labelFeatures = rings.map(ring => ({
     type: 'Feature',
     properties: {
       description: ring.getLabelText(),
-      icon: 'circle'
+      icon: 'circle',
     },
     geometry: {
       type: 'Point',
-      coordinates: [ring.getLabelPosition().toJSON().lng, ring.getLabelPosition().toJSON().lat]
-    }
+      coordinates: [ring.getLabelPosition().toJSON().lng, ring.getLabelPosition().toJSON().lat],
+    },
   }));
   return new MapStyleLayer({
-    "id": "poi-labels",
-    "type": "symbol",
+    'id': 'poi-labels',
+    'type': 'symbol',
     'source': {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features: labelFeatures
-      }
+        features: labelFeatures,
+      },
     },
-    "layout": {
-      "text-field": ["get", "description"],
-      'text-font': ["Open Sans Regular","Arial Unicode MS Regular"],
-      'text-size': 14
+    'layout': {
+      'text-field': ['get', 'description'],
+      'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular'],
+      'text-size': 14,
     },
-    "paint": {
+    'paint': {
       'text-color': '#3a3632',
       'text-halo-color': '#ffffff',
-      'text-halo-width': 2
-    }
-  })
+      'text-halo-width': 2,
+    },
+  });
 }
 
-export function createDirectionLineLayer(ippLngLat, directionLngLat) {
-  ippLngLat = new LngLat(ippLngLat).toJSON();
-  directionLngLat = new LngLat(directionLngLat).toJSON();
+export function createDirectionLineLayer(ippLngLat: LngLatInput, directionLngLat: LngLatInput) {
+  const ipp = new LngLat(ippLngLat).toJSON();
+  const direction = new LngLat(directionLngLat).toJSON();
 
   return new MapStyleLayer({
     'type': 'line',
@@ -80,31 +84,50 @@ export function createDirectionLineLayer(ippLngLat, directionLngLat) {
       data: {
         'type': 'Feature',
         'properties': {
-          'name': 'Direction of Travel Line'
+          'name': 'Direction of Travel Line',
         },
         'geometry': {
           'type': 'LineString',
           'coordinates': [
-            [ippLngLat.lng, ippLngLat.lat],
-            [directionLngLat.lng, directionLngLat.lat]]
-        }
-      }
+            [ipp.lng, ipp.lat],
+            [direction.lng, direction.lat],
+          ],
+        },
+      },
     },
     'layout': {},
     'paint': {
       'line-color': '#3a3632',
       'line-width': 2,
-      'line-opacity': 0.7
-    }
-  })
+      'line-opacity': 0.7,
+    },
+  });
 }
-function buildSectorPolygon(centerLngLat, innerRadius, outerRadius, startBearing, endBearing) {
+type SectorPolygon = {
+  type: 'Polygon';
+  coordinates: number[][][];
+};
+
+interface ProbabilityCell {
+  polygon: SectorPolygon;
+  density: number;
+  probability: number;
+  intensity: number;
+}
+
+function buildSectorPolygon(
+  centerLngLat: LngLatInput,
+  innerRadius: number,
+  outerRadius: number,
+  startBearing: number,
+  endBearing: number,
+): SectorPolygon {
   const c = new LngLat(centerLngLat);
   const angleSpan = endBearing - startBearing;
   const isFullCircle = Math.abs(angleSpan) >= 360 - 1e-6;
   const numSamples = Math.max(8, Math.ceil(Math.abs(angleSpan) / 5));
   const step = angleSpan / numSamples;
-  const outerPts = [];
+  const outerPts: number[][] = [];
   for (let i = 0; i <= numSamples; i++) {
     const p = c.moveTo(startBearing + step * i, outerRadius);
     outerPts.push([p.lng, p.lat]);
@@ -113,7 +136,7 @@ function buildSectorPolygon(centerLngLat, innerRadius, outerRadius, startBearing
     if (innerRadius === 0) {
       return { type: 'Polygon', coordinates: [outerPts] };
     }
-    const innerPts = [];
+    const innerPts: number[][] = [];
     for (let i = numSamples; i >= 0; i--) {
       const p = c.moveTo(startBearing + step * i, innerRadius);
       innerPts.push([p.lng, p.lat]);
@@ -124,7 +147,7 @@ function buildSectorPolygon(centerLngLat, innerRadius, outerRadius, startBearing
     const ring = [[c.lng, c.lat], ...outerPts, [c.lng, c.lat]];
     return { type: 'Polygon', coordinates: [ring] };
   }
-  const innerPts = [];
+  const innerPts: number[][] = [];
   for (let i = numSamples; i >= 0; i--) {
     const p = c.moveTo(startBearing + step * i, innerRadius);
     innerPts.push([p.lng, p.lat]);
@@ -133,7 +156,11 @@ function buildSectorPolygon(centerLngLat, innerRadius, outerRadius, startBearing
   return { type: 'Polygon', coordinates: [ring] };
 }
 
-function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
+function computeProbabilityCells(
+  ippLngLat: LngLatInput,
+  destinationLngLat: LngLatInput | null,
+  behavior: StatisticalBehavior,
+): ProbabilityCell[] {
   const distances = behavior.getDistanceProbabilities().map(d => d.value * 1000);
   const cumDistProbs = [0.25, 0.50, 0.75, 0.95];
   const distBands = [
@@ -144,7 +171,7 @@ function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
   ];
 
   let baseAngle = 0;
-  let angBands;
+  let angBands: { start: number; end: number; prob: number }[];
 
   if (destinationLngLat) {
     const ipp = new LngLat(ippLngLat);
@@ -152,7 +179,7 @@ function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
     baseAngle = dest.getBearingTo(ipp);
     const { angles } = behavior.getDispersion();
     const cumAng = [0.25, 0.50, 0.75, 0.95];
-    const halfBand = i => (i === 0 ? cumAng[0] : cumAng[i] - cumAng[i - 1]) / 2;
+    const halfBand = (i: number) => (i === 0 ? cumAng[0] : cumAng[i] - cumAng[i - 1]) / 2;
     angBands = [
       { start: 0, end: angles[0], prob: halfBand(0) },
       { start: angles[0], end: angles[1], prob: halfBand(1) },
@@ -170,7 +197,7 @@ function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
     angBands = [{ start: 0, end: 360, prob: 1.0 }];
   }
 
-  const cells = [];
+  const cells: ProbabilityCell[] = [];
   for (const dist of distBands) {
     const ringArea = Math.PI * (dist.outer * dist.outer - dist.inner * dist.inner);
     for (const ang of angBands) {
@@ -185,7 +212,7 @@ function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
         baseAngle + ang.start,
         baseAngle + ang.end,
       );
-      cells.push({ polygon, density, probability });
+      cells.push({ polygon, density, probability, intensity: 0 });
     }
   }
 
@@ -208,9 +235,15 @@ function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
   return cells;
 }
 
-export function createHeatmapLayer(ippLngLat, destinationLngLat, behavior) {
-  behavior = new StatisticalBehavior(behavior);
-  const cells = computeProbabilityCells(ippLngLat, destinationLngLat, behavior);
+export function createHeatmapLayer(
+  ippLngLat: LngLatInput,
+  destinationLngLat: LngLatInput | null,
+  behavior: BehaviorData | StatisticalBehavior,
+) {
+  const stats = behavior instanceof StatisticalBehavior
+    ? behavior
+    : new StatisticalBehavior(behavior);
+  const cells = computeProbabilityCells(ippLngLat, destinationLngLat, stats);
   const features = cells.map(cell => ({
     type: 'Feature',
     properties: {
@@ -255,47 +288,54 @@ export function createHeatmapLayer(ippLngLat, destinationLngLat, behavior) {
   });
 }
 
-export function createDispersionLinesLayer(ippLngLat, destinationLngLat, behavior) {
-  ippLngLat = new LngLat(ippLngLat);
-  destinationLngLat = new LngLat(destinationLngLat);
-  behavior = new StatisticalBehavior(behavior);
-  const {angles} =  behavior.getDispersion();
-  const dist = behavior.getDistanceProbabilities()[3].value;
-  const baseAngle = destinationLngLat.getBearingTo(ippLngLat);
-  const leftLines = angles.map(angle => ({
-    start: ippLngLat,
-    end: ippLngLat.moveTo(baseAngle + angle, dist * 1000)
+export function createDispersionLinesLayer(
+  ippLngLat: LngLatInput,
+  destinationLngLat: LngLatInput,
+  behavior: BehaviorData | StatisticalBehavior,
+) {
+  const ipp = new LngLat(ippLngLat);
+  const destination = new LngLat(destinationLngLat);
+  const stats = behavior instanceof StatisticalBehavior
+    ? behavior
+    : new StatisticalBehavior(behavior);
+  const { angles } = stats.getDispersion();
+  const dist = stats.getDistanceProbabilities()[3].value;
+  const baseAngle = destination.getBearingTo(ipp);
+  const leftLines = angles.map((angle: number) => ({
+    start: ipp,
+    end: ipp.moveTo(baseAngle + angle, dist * 1000),
   }));
-  const rightLines = angles.map(angle => ({
-    start: ippLngLat,
-    end: ippLngLat.moveTo(baseAngle - angle, dist * 1000)
+  const rightLines = angles.map((angle: number) => ({
+    start: ipp,
+    end: ipp.moveTo(baseAngle - angle, dist * 1000),
   }));
   const features = leftLines.concat(rightLines).map(line => ({
     'type': 'Feature',
     'properties': {
-      'name': 'Dispersion'
+      'name': 'Dispersion',
     },
     'geometry': {
       'type': 'LineString',
       'coordinates': [
         [line.start.lng, line.start.lat],
-        [line.end.lng, line.end.lat]]
-    }
-  }))
+        [line.end.lng, line.end.lat],
+      ],
+    },
+  }));
   return new MapStyleLayer({
     'type': 'line',
     'source': {
       type: 'geojson',
       data: {
         type: 'FeatureCollection',
-        features
-      }
+        features,
+      },
     },
     'layout': {},
     'paint': {
       'line-color': '#6e6960',
       'line-width': 1,
-      'line-opacity': 0.45
-    }
-  })
+      'line-opacity': 0.45,
+    },
+  });
 }

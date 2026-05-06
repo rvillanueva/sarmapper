@@ -1,6 +1,15 @@
-export default function BehaviorStats({
-  behavior
-}) {
+interface BehaviorStatsProps {
+  behavior: {
+    n: number;
+    distances: number[];
+    dispersion: {
+      n?: number;
+      angles: number[];
+    };
+  };
+}
+
+export default function BehaviorStats({ behavior }: BehaviorStatsProps) {
   const headerClass = "px-3 py-2.5 text-left font-mono text-[10px] tracking-[0.14em] uppercase text-warm-gray font-normal";
   const rowLabelClass = "px-3 py-2.5 font-mono text-[11px] uppercase tracking-[0.08em] text-charcoal";
   const cellClass = "px-3 py-2.5 text-[13px] text-slate-warm font-light tabular-nums";

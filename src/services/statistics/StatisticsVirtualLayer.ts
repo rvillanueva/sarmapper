@@ -1,10 +1,26 @@
+import type * as MapboxGL from 'mapbox-gl';
 import {
   createRingLabelsLayer,
   createDirectionLineLayer,
   createHeatmapLayer,
 } from './geometry';
+import type MapStyleLayer from '../map/MapStyleLayer';
+import type MapMarker from '../map/MapMarker';
+import type { BehaviorData } from './StatisticalBehavior';
+
+interface Layers {
+  heatmap: MapStyleLayer | null;
+  labels: MapStyleLayer | null;
+  directionLine: MapStyleLayer | null;
+}
 
 export default class StatisticsVirtualLayer {
+  map: MapboxGL.Map | null;
+  layers: Layers;
+  ipp: MapMarker | null;
+  destination: MapMarker | null;
+  behavior: BehaviorData | null;
+
   constructor() {
     this.map = null;
     this.layers = {
@@ -16,12 +32,13 @@ export default class StatisticsVirtualLayer {
     this.destination = null;
     this.behavior = null;
   }
-  addTo(map) {
+  addTo(map: MapboxGL.Map) {
     this.map = map;
   }
-  _removeLayer(key) {
-    if (this.layers[key]) {
-      this.layers[key].remove();
+  _removeLayer(key: keyof Layers) {
+    const layer = this.layers[key];
+    if (layer) {
+      layer.remove();
       this.layers[key] = null;
     }
   }
@@ -56,12 +73,12 @@ export default class StatisticsVirtualLayer {
     this.destination = null;
     this._render();
   };
-  drawRings = (ipp, behavior) => {
+  drawRings = (ipp: MapMarker, behavior: BehaviorData) => {
     this.ipp = ipp;
     this.behavior = behavior;
     this._render();
   };
-  drawDispersion(ipp, destination, behavior) {
+  drawDispersion(ipp: MapMarker, destination: MapMarker, behavior: BehaviorData) {
     this.ipp = ipp;
     this.destination = destination;
     this.behavior = behavior;

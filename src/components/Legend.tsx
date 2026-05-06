@@ -57,11 +57,15 @@ export default function Legend() {
             <li className="flex items-center gap-2.5">
               <span
                 aria-hidden
-                className="inline-block w-4 shrink-0"
-                style={{ borderTop: "1.5px solid #e25b2a", opacity: 0.8 }}
+                className="inline-block h-3 w-8 rounded-sm shrink-0 border border-rule"
+                style={{
+                  background:
+                    "linear-gradient(to right, #2c7bb6 0%, #abd9e9 25%, #ffffbf 50%, #fdae61 75%, #d7191c 100%)",
+                  opacity: 0.85,
+                }}
               />
               <span className="text-[12px] text-charcoal leading-snug">
-                Probability rings (25/50/75/95%)
+                Probability density (low &rarr; high)
               </span>
             </li>
             <li className="flex items-center gap-2.5">
@@ -72,16 +76,6 @@ export default function Legend() {
               />
               <span className="text-[12px] text-charcoal leading-snug">
                 Direction line
-              </span>
-            </li>
-            <li className="flex items-center gap-2.5">
-              <span
-                aria-hidden
-                className="inline-block w-4 shrink-0"
-                style={{ borderTop: "1px solid #6e6960", opacity: 0.5 }}
-              />
-              <span className="text-[12px] text-charcoal leading-snug">
-                Dispersion bounds
               </span>
             </li>
           </ul>

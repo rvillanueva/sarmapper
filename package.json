@@ -64,6 +64,7 @@
     "build": "vite build && cp instrument.server.mjs .output/server",
     "preview": "vite preview",
     "test": "vitest run",
+    "typecheck": "tsc --noEmit",
     "start": "node --import ./.output/server/instrument.server.mjs .output/server/index.mjs"
   },
   "browserslist": {
