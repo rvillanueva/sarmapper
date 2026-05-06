@@ -66,6 +66,7 @@ export default class StatisticsVirtualLayer {
   }
   clearRings = () => {
     this.ipp = null;
+    this.destination = null;
     this.behavior = null;
     this._render();
   };
@@ -75,6 +76,7 @@ export default class StatisticsVirtualLayer {
   };
   drawRings = (ipp: MapMarker, behavior: BehaviorData) => {
     this.ipp = ipp;
+    this.destination = null;
     this.behavior = behavior;
     this._render();
   };

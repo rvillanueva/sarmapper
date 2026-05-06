@@ -179,19 +179,29 @@ function computeProbabilityCells(
     baseAngle = dest.getBearingTo(ipp);
     const { angles } = behavior.getDispersion();
     const cumAng = [0.25, 0.50, 0.75, 0.95];
-    const halfBand = (i: number) => (i === 0 ? cumAng[0] : cumAng[i] - cumAng[i - 1]) / 2;
+    const rearProb = 1 - cumAng[3];
+    // Cap the outer angle so the forward bands never overlap behind the
+    // marker. If p95 reaches the cap, there is no rear span left, so fold
+    // the rear probability into the outermost forward bands instead.
+    const p95 = Math.min(angles[3], 179.99);
+    const noRearSpan = p95 >= 180 - 0.01;
+    const outerBoost = noRearSpan ? rearProb / 2 : 0;
+    const halfBand = (i: number) => {
+      const base = (i === 0 ? cumAng[0] : cumAng[i] - cumAng[i - 1]) / 2;
+      return i === 3 ? base + outerBoost : base;
+    };
     angBands = [
       { start: 0, end: angles[0], prob: halfBand(0) },
       { start: angles[0], end: angles[1], prob: halfBand(1) },
       { start: angles[1], end: angles[2], prob: halfBand(2) },
-      { start: angles[2], end: angles[3], prob: halfBand(3) },
+      { start: angles[2], end: p95, prob: halfBand(3) },
       { start: -angles[0], end: 0, prob: halfBand(0) },
       { start: -angles[1], end: -angles[0], prob: halfBand(1) },
       { start: -angles[2], end: -angles[1], prob: halfBand(2) },
-      { start: -angles[3], end: -angles[2], prob: halfBand(3) },
+      { start: -p95, end: -angles[2], prob: halfBand(3) },
     ];
-    if (angles[3] < 180) {
-      angBands.push({ start: angles[3], end: 360 - angles[3], prob: 0.05 });
+    if (!noRearSpan) {
+      angBands.push({ start: p95, end: 360 - p95, prob: rearProb });
     }
   } else {
     angBands = [{ start: 0, end: 360, prob: 1.0 }];
