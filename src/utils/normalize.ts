@@ -1,53 +1,73 @@
 import { fromJS, Map, List } from 'immutable';
 
-export function toArray(obj) {
-  return obj.allIds.map(id => obj.byId[id]);
+export interface NormalizedState<T = any> {
+  allIds: string[];
+  byId: Record<string, T>;
+  counter?: number;
+  [key: string]: any;
 }
 
-export function initializeNormalState() {
-  return {
-    allIds: [],
-    byId: {}
-  };
+export interface MergeOptions {
+  insertAt?: 'start' | 'end';
+  overwrite?: boolean;
+  indexes?: Array<{ name: string; field: string }>;
 }
 
-export function initializeNormalStateWithCounter() {
+export interface RemoveOptions {
+  indexes?: Array<{ name: string; field: string }>;
+}
+
+export function toArray(obj: NormalizedState): any[] {
+  return obj.allIds.map((id: string) => obj.byId[id]);
+}
+
+export function initializeNormalState(): NormalizedState {
   return {
     allIds: [],
     byId: {},
-    counter: 0
   };
 }
 
+export function initializeNormalStateWithCounter(): NormalizedState {
+  return {
+    allIds: [],
+    byId: {},
+    counter: 0,
+  };
+}
 
-export function mergeItems(state, items, options) {
+export function mergeItems(
+  state: NormalizedState,
+  items: any[],
+  options: MergeOptions,
+): NormalizedState {
   options = options || {};
-  let newState = fromJS(state);
-  items.forEach(item => {
-    let counter = newState.get('counter');
-    if(typeof item._id === 'undefined' && typeof counter === 'number') {
+  let newState: any = fromJS(state);
+  items.forEach((item: any) => {
+    const counter = newState.get('counter');
+    if (typeof item._id === 'undefined' && typeof counter === 'number') {
       item._id = String(counter);
       newState = newState.set('counter', counter + 1);
     }
-    if(!state.byId[item._id]) {
-      if(options.insertAt === 'start') {
-        newState = newState.update('allIds', list => list.insert(0, item._id));
+    if (!state.byId[item._id]) {
+      if (options.insertAt === 'start') {
+        newState = newState.update('allIds', (list: any) => list.insert(0, item._id));
       } else {
-        newState = newState.update('allIds', list => list.push(item._id));
+        newState = newState.update('allIds', (list: any) => list.push(item._id));
       }
     }
     let mergedItem;
-    if(options.overwrite === false) {
+    if (options.overwrite === false) {
       mergedItem = item;
     } else {
-      let original = newState.getIn(['byId', item._id]) || new Map();
+      const original = newState.getIn(['byId', item._id]) || (new (Map as any)());
       mergedItem = original.merge(item);
     }
     newState = newState.setIn(['byId', item._id], mergedItem);
   });
-  if(options.indexes) {
-    options.indexes.forEach(index => {
-      items.forEach(item => {
+  if (options.indexes) {
+    options.indexes.forEach((index: { name: string; field: string }) => {
+      items.forEach((item: any) => {
         newState = addToIndex(newState, index, item);
       });
     });
@@ -55,16 +75,20 @@ export function mergeItems(state, items, options) {
   return newState.toJS();
 }
 
-export function removeItem(state, id, options) {
+export function removeItem(
+  state: NormalizedState,
+  id: string,
+  options: RemoveOptions,
+): NormalizedState {
   options = options || {};
-  let newState = fromJS(state);
-  let itemLocation = state.allIds.indexOf(id);
-  if(itemLocation === -1) {
+  let newState: any = fromJS(state);
+  const itemLocation = state.allIds.indexOf(id);
+  if (itemLocation === -1) {
     return state;
   }
   const item = state.byId[id];
-  if(item && options.indexes) {
-    options.indexes.forEach(index => {
+  if (item && options.indexes) {
+    options.indexes.forEach((index: { name: string; field: string }) => {
       newState = removeFromIndex(newState, index, item);
     });
   }
@@ -74,24 +98,27 @@ export function removeItem(state, id, options) {
   return newState.toJS();
 }
 
-export function removeItemData(state, id) {
-  let newState = fromJS(state);
+export function removeItemData(state: NormalizedState, id: string): NormalizedState {
+  let newState: any = fromJS(state);
   newState = newState.setIn(['byId', id], { _id: id });
   return newState.toJS();
 }
 
-export function denormalize(items, key) {
+export function denormalize(items: any[], key: string): any[] {
   return items
-    .map(item => (item[key] ? item[key] : null))
-    .filter(a => a);
+    .map((item: any) => (item[key] ? item[key] : null))
+    .filter((a: any) => a);
 }
 
-export function removeDenormalized(items, keys) {
-  let newItems = items.map(a => a);
-  keys.forEach(key => {
-    let objectKey;
-    let idKey;
-    if(typeof key === 'string') {
+export function removeDenormalized(
+  items: any[],
+  keys: Array<string | { objectKey: string; idKey: string }>,
+): any[] {
+  let newItems = items.map((a: any) => a);
+  keys.forEach((key) => {
+    let objectKey: string;
+    let idKey: string;
+    if (typeof key === 'string') {
       objectKey = key;
       idKey = `${key}Id`;
     } else {
@@ -99,14 +126,14 @@ export function removeDenormalized(items, keys) {
       idKey = key.idKey;
     }
     newItems = newItems
-      .map(item => {
-        let patch = item[objectKey] && item[objectKey]
-          ? {[idKey]: item[objectKey]._id}
+      .map((item: any) => {
+        const patch = item[objectKey] && item[objectKey]
+          ? { [idKey]: item[objectKey]._id }
           : {};
         return Object.assign({}, item, patch);
       })
-      .filter(a => a)
-      .map(item => {
+      .filter((a: any) => a)
+      .map((item: any) => {
         Reflect.deleteProperty(item, objectKey);
         return item;
       });
@@ -114,32 +141,36 @@ export function removeDenormalized(items, keys) {
   return newItems;
 }
 
-function addToIndex(newState, index, item) {
+function addToIndex(newState: any, index: { name: string; field: string }, item: any): any {
   const indexLocation = [index.name, item[index.field]];
-  if(!newState.getIn(indexLocation)) {
-    newState = newState.setIn(indexLocation, new List());
+  if (!newState.getIn(indexLocation)) {
+    newState = newState.setIn(indexLocation, new (List as any)());
   }
-  if(newState.getIn(indexLocation).indexOf(item._id) === -1) {
+  if (newState.getIn(indexLocation).indexOf(item._id) === -1) {
     const newList = newState.getIn(indexLocation).push(item._id);
     newState = newState.setIn(indexLocation, newList);
   }
   return newState;
 }
 
-function removeFromIndex(newState, index, item) {
+function removeFromIndex(newState: any, index: { name: string; field: string }, item: any): any {
   const indexLocation = [index.name, item[index.field]];
   const list = newState.getIn(indexLocation);
-  if(list) {
-    const newList = list.filter(itemId => itemId !== item._id);
+  if (list) {
+    const newList = list.filter((itemId: string) => itemId !== item._id);
     newState = newState.setIn(indexLocation, newList);
   }
   return newState;
 }
 
-export function removeMatchingValuesByKey(state, key, value) {
-  let newState = fromJS(state);
-  state.allIds.forEach(id => {
-    if(state.byId[id][key] === value) {
+export function removeMatchingValuesByKey(
+  state: NormalizedState,
+  key: string,
+  value: any,
+): NormalizedState {
+  let newState: any = fromJS(state);
+  state.allIds.forEach((id: string) => {
+    if (state.byId[id][key] === value) {
       newState = newState.setIn(['byId', id, key], null);
     }
   });

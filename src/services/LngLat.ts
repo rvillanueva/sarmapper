@@ -1,6 +1,15 @@
 import { computeDestinationPoint, getRhumbLineBearing } from "geolib";
+
+export type LngLatInput =
+  | LngLat
+  | { lng: number; lat: number }
+  | [number, number];
+
 export default class LngLat {
-  constructor(lngLat) {
+  lng: number;
+  lat: number;
+
+  constructor(lngLat: LngLatInput) {
     if (Array.isArray(lngLat)) {
       this.lng = lngLat[0];
       this.lat = lngLat[1];
@@ -15,7 +24,7 @@ export default class LngLat {
       lng: this.lng,
     };
   }
-  moveTo(bearing, distance) {
+  moveTo(bearing: number, distance: number) {
     const newCoords = computeDestinationPoint(
       { latitude: this.lat, longitude: this.lng },
       distance,
@@ -26,12 +35,12 @@ export default class LngLat {
       lng: newCoords.longitude,
     });
   }
-  getBearingTo(lngLat) {
-    lngLat = new LngLat(lngLat);
+  getBearingTo(lngLat: LngLatInput) {
+    const target = new LngLat(lngLat);
     return getRhumbLineBearing(
       {
-        longitude: lngLat.toJSON().lng,
-        latitude: lngLat.toJSON().lat,
+        longitude: target.toJSON().lng,
+        latitude: target.toJSON().lat,
       },
       {
         longitude: this.lng,
