@@ -37,6 +37,12 @@ export default class SearchMap extends EventEmitter {
       if(evt.originalEvent && typeof evt.originalEvent.preventDefault === 'function') {
         evt.originalEvent.preventDefault();
       }
+      // Android Chrome fires a native contextmenu during a long-press touch in addition
+      // to our custom long-press timer. Dedupe so only one emission reaches listeners.
+      if(this._touchActive) {
+        if(this._contextmenuEmittedDuringTouch) return;
+        this._contextmenuEmittedDuringTouch = true;
+      }
       this.emit('contextmenu', { lngLat: evt.lngLat, point: evt.point, originalEvent: evt.originalEvent });
     });
     this._attachLongPressHandler();
@@ -53,6 +59,8 @@ export default class SearchMap extends EventEmitter {
         pressTimer = null;
       }
       pressStart = null;
+      this._touchActive = false;
+      this._contextmenuEmittedDuringTouch = false;
     };
     const isOnInteractive = (target) => {
       if(!target || typeof target.closest !== 'function') return false;
@@ -62,14 +70,18 @@ export default class SearchMap extends EventEmitter {
       if(e.touches.length !== 1) { cancel(); return; }
       if(isOnInteractive(e.target)) return;
       const t = e.touches[0];
+      this._touchActive = true;
+      this._contextmenuEmittedDuringTouch = false;
       pressStart = { x: t.clientX, y: t.clientY };
       pressTimer = setTimeout(() => {
+        pressTimer = null;
         if(!pressStart || !this.map) return;
+        if(this._contextmenuEmittedDuringTouch) return;
+        this._contextmenuEmittedDuringTouch = true;
         const rect = container.getBoundingClientRect();
         const point = { x: pressStart.x - rect.left, y: pressStart.y - rect.top };
         const lngLat = this.map.unproject([point.x, point.y]);
         this.emit('contextmenu', { lngLat, point, originalEvent: e });
-        pressTimer = null;
       }, 500);
     }, { passive: true });
     container.addEventListener('touchmove', (e) => {
