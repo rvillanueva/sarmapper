@@ -73,21 +73,20 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
   return (
     <>
       <nav className="flex items-center justify-between bg-white border-b border-rule px-6 py-1 z-50">
-        <button
-          type="button"
-          className="flex items-center gap-1 min-w-0 bg-transparent border-0 p-0 cursor-pointer"
-          aria-label="SAR Mapper"
-        >
-          <img
-            src="/sarmapper-logo-compact.svg"
-            alt=""
-            aria-hidden="true"
-            className="h-6 w-auto"
-          />
-          <h1 className="font-serif text-base text-ink truncate m-0 leading-[1.25] pb-0.5 mt-0.5 tracking-[-0.015em]">
-            SAR Mapper
-          </h1>
-        </button>
+        <h1 className="m-0 min-w-0">
+          <button
+            type="button"
+            className="flex items-center gap-1 min-w-0 bg-transparent border-0 p-0 cursor-pointer font-serif text-base text-ink leading-[1.25] tracking-[-0.015em]"
+          >
+            <img
+              src="/sarmapper-logo-compact.svg"
+              alt=""
+              aria-hidden="true"
+              className="h-6 w-auto"
+            />
+            <span className="truncate pb-0.5 mt-0.5">SAR Mapper</span>
+          </button>
+        </h1>
         <div className="flex items-center gap-1">
           {navItems.map(({ id, label, icon: Icon }) => {
             const active = activeModal === id;
