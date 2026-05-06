@@ -45,7 +45,52 @@ export default class SearchMap extends EventEmitter {
     }) as unknown as mapboxgl.IControl);
     this.map.on('load', data => this.emit('load', data));
     this.map.on('move', data => this.emit('move', data));
+    this.map.on('contextmenu', evt => {
+      if (evt.originalEvent && typeof evt.originalEvent.preventDefault === 'function') {
+        evt.originalEvent.preventDefault();
+      }
+      this.emit('contextmenu', { lngLat: evt.lngLat, point: evt.point, originalEvent: evt.originalEvent });
+    });
+    this._attachLongPressHandler();
     this.statsLayer.addTo(this.map);
+  }
+  _attachLongPressHandler() {
+    if (!this.map) return;
+    const container = this.map.getContainer();
+    let pressTimer: ReturnType<typeof setTimeout> | null = null;
+    let pressStart: { x: number; y: number } | null = null;
+    const cancel = () => {
+      if (pressTimer) {
+        clearTimeout(pressTimer);
+        pressTimer = null;
+      }
+      pressStart = null;
+    };
+    const isOnInteractive = (target: EventTarget | null) => {
+      if (!target || !(target instanceof Element)) return false;
+      return Boolean(target.closest('.mapboxgl-marker, .mapboxgl-ctrl, .mapboxgl-popup, .sar-map-context-menu'));
+    };
+    container.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) { cancel(); return; }
+      if (isOnInteractive(e.target)) return;
+      const t = e.touches[0];
+      pressStart = { x: t.clientX, y: t.clientY };
+      pressTimer = setTimeout(() => {
+        if (!pressStart || !this.map) return;
+        const rect = container.getBoundingClientRect();
+        const point = { x: pressStart.x - rect.left, y: pressStart.y - rect.top };
+        const lngLat = this.map.unproject([point.x, point.y]);
+        this.emit('contextmenu', { lngLat, point, originalEvent: e });
+        pressTimer = null;
+      }, 500);
+    }, { passive: true });
+    container.addEventListener('touchmove', (e) => {
+      if (!pressTimer || !pressStart) return;
+      const t = e.touches[0];
+      if (Math.hypot(t.clientX - pressStart.x, t.clientY - pressStart.y) > 10) cancel();
+    }, { passive: true });
+    container.addEventListener('touchend', cancel);
+    container.addEventListener('touchcancel', cancel);
   }
   resize() {
     if (this.map) this.map.resize();
