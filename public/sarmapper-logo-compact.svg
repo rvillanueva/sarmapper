@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200"><g transform="translate(21.999999999999996 21.999999999999996) scale(0.78)">
+        <circle cx="100" cy="100" r="95" stroke="#1A1816" stroke-width="10" fill="none"/>
+        <circle cx="100" cy="100" r="46"  stroke="#1A1816" stroke-width="10" fill="none"/>
+        <line x1="100" y1="100" x2="52.50" y2="17.73" stroke="#1A1816" stroke-width="10" stroke-linecap="butt"/><line x1="100" y1="100" x2="100.00" y2="5.00" stroke="#1A1816" stroke-width="10" stroke-linecap="butt"/><line x1="100" y1="100" x2="147.50" y2="17.73" stroke="#1A1816" stroke-width="10" stroke-linecap="butt"/>
+        <circle cx="100" cy="100" r="14" fill="#E25B2A"/>
+      </g></svg>
