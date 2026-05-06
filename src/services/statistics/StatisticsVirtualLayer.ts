@@ -1,73 +1,89 @@
 import type * as MapboxGL from 'mapbox-gl';
 import {
-  createRingsLayer,
   createRingLabelsLayer,
-  createDispersionLinesLayer,
   createDirectionLineLayer,
+  createHeatmapLayer,
 } from './geometry';
 import type MapStyleLayer from '../map/MapStyleLayer';
 import type MapMarker from '../map/MapMarker';
 import type { BehaviorData } from './StatisticalBehavior';
 
 interface Layers {
-  rings: MapStyleLayer | null;
+  heatmap: MapStyleLayer | null;
   labels: MapStyleLayer | null;
-  dispersionLines: MapStyleLayer | null;
   directionLine: MapStyleLayer | null;
 }
 
 export default class StatisticsVirtualLayer {
   map: MapboxGL.Map | null;
   layers: Layers;
+  ipp: MapMarker | null;
+  destination: MapMarker | null;
+  behavior: BehaviorData | null;
 
   constructor() {
     this.map = null;
     this.layers = {
-      rings: null,
+      heatmap: null,
       labels: null,
-      dispersionLines: null,
       directionLine: null,
     };
+    this.ipp = null;
+    this.destination = null;
+    this.behavior = null;
   }
   addTo(map: MapboxGL.Map) {
     this.map = map;
   }
-  clearRings() {
-    if (!this.map) return null;
-    if (this.layers.rings) {
-      this.layers.rings.remove();
-      this.layers.rings = null;
-    }
-    if (this.layers.labels) {
-      this.layers.labels.remove();
-      this.layers.labels = null;
+  _removeLayer(key: keyof Layers) {
+    const layer = this.layers[key];
+    if (layer) {
+      layer.remove();
+      this.layers[key] = null;
     }
   }
+  _render() {
+    if (!this.map) return;
+    this._removeLayer('heatmap');
+    this._removeLayer('directionLine');
+    this._removeLayer('labels');
+
+    if (!this.ipp || !this.behavior) return;
+
+    const ippLngLat = this.ipp.getLngLat();
+    const destLngLat = this.destination ? this.destination.getLngLat() : null;
+
+    this.layers.heatmap = createHeatmapLayer(ippLngLat, destLngLat, this.behavior);
+    this.layers.heatmap.addTo(this.map);
+
+    if (destLngLat) {
+      this.layers.directionLine = createDirectionLineLayer(ippLngLat, destLngLat);
+      this.layers.directionLine.addTo(this.map);
+    }
+
+    this.layers.labels = createRingLabelsLayer(ippLngLat, this.behavior);
+    this.layers.labels.addTo(this.map);
+  }
+  clearRings = () => {
+    this.ipp = null;
+    this.destination = null;
+    this.behavior = null;
+    this._render();
+  };
   clearDispersion = () => {
-    if (!this.map) return null;
-    if (this.layers.dispersionLines) {
-      this.layers.dispersionLines.remove();
-      this.layers.dispersionLines = null;
-    }
-    if (this.layers.directionLine) {
-      this.layers.directionLine.remove();
-      this.layers.directionLine = null;
-    }
+    this.destination = null;
+    this._render();
   };
   drawRings = (ipp: MapMarker, behavior: BehaviorData) => {
-    if (!this.map) return null;
-    this.clearRings();
-    this.layers.rings = createRingsLayer(ipp.getLngLat(), behavior);
-    this.layers.labels = createRingLabelsLayer(ipp.getLngLat(), behavior);
-    this.layers.rings.addTo(this.map);
-    this.layers.labels.addTo(this.map);
+    this.ipp = ipp;
+    this.destination = null;
+    this.behavior = behavior;
+    this._render();
   };
   drawDispersion(ipp: MapMarker, destination: MapMarker, behavior: BehaviorData) {
-    if (!this.map) return null;
-    this.clearDispersion();
-    this.layers.dispersionLines = createDispersionLinesLayer(ipp.getLngLat(), destination.getLngLat(), behavior);
-    this.layers.directionLine = createDirectionLineLayer(ipp.getLngLat(), destination.getLngLat());
-    this.layers.dispersionLines.addTo(this.map);
-    this.layers.directionLine.addTo(this.map);
+    this.ipp = ipp;
+    this.destination = destination;
+    this.behavior = behavior;
+    this._render();
   }
 }
