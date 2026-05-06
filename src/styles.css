@@ -1,7 +1,5 @@
 @import "tailwindcss";
 
-@import url("https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Hanken+Grotesk:wght@300;400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap");
-
 :root {
   --plk-white: #fff;
   --plk-snow: #fafafa;
