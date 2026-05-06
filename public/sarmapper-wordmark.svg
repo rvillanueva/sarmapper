@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 600" width="1600" height="600">
+        <rect width="1600" height="600" fill="#FFFFFF"/>
+        <g transform="translate(220 140)"><svg viewBox="0 0 200 200" width="320" height="320">
+        <circle cx="100" cy="100" r="88" stroke="#1A1816" stroke-width="1.6" fill="none"/>
+        <circle cx="100" cy="100" r="58" stroke="#1A1816" stroke-width="1.6" fill="none"/>
+        <circle cx="100" cy="100" r="28"  stroke="#1A1816" stroke-width="1.6" fill="none"/>
+        <line x1="100" y1="100" x2="56.00" y2="23.79" stroke="#1A1816" stroke-width="1.6"/><line x1="100" y1="100" x2="100.00" y2="12.00" stroke="#1A1816" stroke-width="1.6"/><line x1="100" y1="100" x2="144.00" y2="23.79" stroke="#1A1816" stroke-width="1.6"/>
+        <path d="M 56.00 23.79 A 88 88 0 0 1 144.00 23.79"
+              stroke="#1A1816" stroke-width="1.6" fill="none"/>
+        <circle cx="100" cy="100" r="3.4" fill="#E25B2A"/>
+      </svg></g>
+        <text x="564" y="392" font-family="'Instrument Serif', 'Times New Roman', serif" font-size="260" fill="#1A1816" letter-spacing="-5">SAR Mapper</text>
+      </svg>
