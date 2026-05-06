@@ -1,6 +1,7 @@
 import { useEffect, useCallback } from "react";
 import "./App.css";
 import Navbar from "./Navbar";
+import MapSwitcher from "./MapSwitcher";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useAppStore } from "../store/appStore";
 import searchMap from "../store/searchMap";
@@ -36,6 +37,7 @@ export default function App() {
       <div className="app-content">
         <div className="map-container">
           <div id="map" />
+          <MapSwitcher />
         </div>
       </div>
     </div>

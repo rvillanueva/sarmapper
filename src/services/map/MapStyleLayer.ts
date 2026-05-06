@@ -12,8 +12,9 @@ export default class MapStyleLayer {
     this.map.addLayer(Object.assign({}, this.layer));
   }
   remove = () => {
-    this.map.removeLayer(this.id);
-    this.map.removeSource(this.id);
+    if(!this.map) return;
+    if(this.map.getLayer(this.id)) this.map.removeLayer(this.id);
+    if(this.map.getSource(this.id)) this.map.removeSource(this.id);
   }
   toJSON() {
     return Object.assign({}, this.layer);
