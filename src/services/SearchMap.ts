@@ -125,4 +125,14 @@ export default class SearchMap extends EventEmitter {
     if(this.markers.ipp && this.markers.destination) this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
     if(this.markers.ipp) this.statsLayer.drawRings(this.markers.ipp, this.behavior);
   }
+  setMapStyle = (styleUrl) => {
+    if(!this.map) return;
+    this.map.once('style.load', () => {
+      if(this.markers.ipp && this.behavior) this.statsLayer.drawRings(this.markers.ipp, this.behavior);
+      if(this.markers.ipp && this.markers.destination && this.behavior) {
+        this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
+      }
+    });
+    this.map.setStyle(styleUrl);
+  }
 }
