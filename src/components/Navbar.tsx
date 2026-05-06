@@ -74,9 +74,11 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
     <>
       <nav className="flex items-center justify-between bg-white border-b border-rule px-6 py-1 z-50">
         <div className="flex items-baseline gap-3 min-w-0">
-          <h1 className="font-serif text-lg text-ink truncate m-0 leading-[1.25] pb-0.5 tracking-[-0.015em]">
-            Lost Person Behavior Mapper
-          </h1>
+          <img
+            src="/sarmapper-wordmark.svg"
+            alt="SAR Mapper"
+            className="h-8 w-auto"
+          />
         </div>
         <div className="flex items-center gap-1">
           {navItems.map(({ id, label, icon: Icon }) => {
