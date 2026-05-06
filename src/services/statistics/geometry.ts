@@ -189,9 +189,20 @@ function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
     }
   }
 
-  const maxDensity = Math.max(...cells.map(c => c.density));
+  // Anchor color scale to a density that is independent of whether a
+  // direction marker is set, so the colormap stays comparable across modes.
+  // Reference = mean density inside the innermost ring under a uniform
+  // distribution (no direction). Cells denser than the reference clip to 1.
+  const refDensity = distances[0] > 0
+    ? cumDistProbs[0] / (Math.PI * distances[0] * distances[0])
+    : 0;
   cells.forEach(c => {
-    c.intensity = maxDensity > 0 ? Math.pow(c.density / maxDensity, 0.25) : 0;
+    if (refDensity <= 0) {
+      c.intensity = 0;
+      return;
+    }
+    const ratio = c.density / refDensity;
+    c.intensity = Math.min(1, Math.pow(ratio, 0.25));
   });
 
   return cells;
