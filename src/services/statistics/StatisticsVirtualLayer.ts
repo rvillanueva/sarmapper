@@ -18,6 +18,16 @@ export default class StatisticsVirtualLayer {
   addTo(map) {
     this.map = map;
   }
+  markStyleReset() {
+    // Custom layers/sources are wiped when the basemap style changes.
+    // Drop our references so we don't try to remove non-existent layers.
+    this.layers = {
+      rings: null,
+      labels: null,
+      dispersionLines: null,
+      directionLine: null
+    };
+  }
   clearRings() {
     if(!this.map) return null;
     if(this.layers.rings) {

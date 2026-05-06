@@ -66,6 +66,34 @@ body, html, #root {
 .mapboxgl-ctrl-group button {
   border-radius: var(--plk-radius-lg) !important;
 }
+.mapboxgl-ctrl-scale {
+  background: rgba(255, 255, 255, 0.85) !important;
+  backdrop-filter: blur(4px);
+  border-color: var(--plk-rule-strong) !important;
+  font-family: var(--plk-font-mono) !important;
+  font-size: 10px !important;
+  letter-spacing: 0.08em !important;
+  color: var(--plk-charcoal) !important;
+  border-radius: var(--plk-radius) !important;
+  padding: 2px 6px !important;
+}
+
+/* Geocoder collapsed look */
+.mapboxgl-ctrl-geocoder {
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06), 0 0 0 1px var(--plk-rule-strong) !important;
+  border-radius: var(--plk-radius-lg) !important;
+  font-family: var(--plk-font-body) !important;
+  min-width: 36px !important;
+}
+.mapboxgl-ctrl-geocoder--input {
+  font-family: var(--plk-font-body) !important;
+  font-size: 13px !important;
+}
+
+/* Subtle context for cursor when in placing mode */
+.mapboxgl-canvas-container.mapboxgl-interactive {
+  transition: cursor 0.1s ease;
+}
 
 @media only screen and (max-width: 720px) {
   .mapboxgl-ctrl-top-right {
