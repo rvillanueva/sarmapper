@@ -30,16 +30,16 @@ export const useAppStore = create<AppState>((set) => ({
   mapCenter: null,
 
   setIppMarker: (items) =>
-    set((state) => ({ markers: mergeItems(state.markers, items) })),
+    set((state) => ({ markers: mergeItems(state.markers, items, {}) })),
 
   clearIppMarker: () =>
-    set((state) => ({ markers: removeItem(state.markers, 'ipp') })),
+    set((state) => ({ markers: removeItem(state.markers, 'ipp', {}) })),
 
   setDirectionMarker: (items) =>
-    set((state) => ({ markers: mergeItems(state.markers, items) })),
+    set((state) => ({ markers: mergeItems(state.markers, items, {}) })),
 
   clearDirectionMarker: () =>
-    set((state) => ({ markers: removeItem(state.markers, 'direction') })),
+    set((state) => ({ markers: removeItem(state.markers, 'direction', {}) })),
 
   setBehavior: (behavior) => set({ behavior }),
 

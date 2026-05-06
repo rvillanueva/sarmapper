@@ -4,8 +4,23 @@ import { v4 as UUIDV4 } from 'uuid';
 
 mapboxgl.accessToken = config.mapboxPublicKey;
 
+export interface MarkerOptions {
+  id?: string;
+  className?: string;
+  draggable?: boolean;
+  [key: string]: unknown;
+}
+
 export default class MapMarker {
-  constructor(markerOptions) {
+  map: mapboxgl.Map | null;
+  markerOptions: MarkerOptions;
+  marker: mapboxgl.Marker;
+  id!: string;
+  on: mapboxgl.Marker['on'];
+  setLngLat: mapboxgl.Marker['setLngLat'];
+  getLngLat: mapboxgl.Marker['getLngLat'];
+
+  constructor(markerOptions: MarkerOptions) {
     this.map = null;
     this.markerOptions = markerOptions;
     this.marker = this._init();
@@ -13,7 +28,7 @@ export default class MapMarker {
     this.setLngLat = this.marker.setLngLat.bind(this.marker);
     this.getLngLat = this.marker.getLngLat.bind(this.marker);
   }
-  getOptions() {
+  getOptions(): MarkerOptions {
     return this.markerOptions;
   }
   _init() {
@@ -23,11 +38,10 @@ export default class MapMarker {
     this.id = markerOptions.id || UUIDV4();
     return new mapboxgl.Marker({
       ...markerOptions,
-      id: this.id,
-      element: el
-    });
+      element: el,
+    } as mapboxgl.MarkerOptions);
   }
-  addTo(map) {
+  addTo(map: mapboxgl.Map) {
     this.map = map;
     this.marker.addTo(map);
   }

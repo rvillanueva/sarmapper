@@ -38,13 +38,13 @@ describe("toGeoJSON", () => {
     expect(result.type).toBe("FeatureCollection");
     // 4 distances (25/50/75/95) -> 4 ring LineStrings
     expect(result.features).toHaveLength(4);
-    result.features.forEach((feature) => {
+    result.features.forEach((feature: any) => {
       expect(feature.type).toBe("Feature");
       expect(feature.geometry.type).toBe("LineString");
       // The ring has 37 points (36 segments + closing point)
       expect(feature.geometry.coordinates).toHaveLength(37);
       // Each coordinate should be [lng, lat]
-      feature.geometry.coordinates.forEach((coord) => {
+      feature.geometry.coordinates.forEach((coord: [number, number]) => {
         expect(coord).toHaveLength(2);
         expect(typeof coord[0]).toBe("number");
         expect(typeof coord[1]).toBe("number");
@@ -59,12 +59,12 @@ describe("toGeoJSON", () => {
     // Should have more features when a direction is set.
     expect(withDir.features.length).toBeGreaterThan(withoutDir.features.length);
     const dispersionFeatures = withDir.features.filter(
-      (f) => f.properties && f.properties.name === "Dispersion",
+      (f: any) => f.properties && f.properties.name === "Dispersion",
     );
     // 4 angles on each side -> 8 dispersion lines
     expect(dispersionFeatures).toHaveLength(8);
     const directionFeature = withDir.features.find(
-      (f) =>
+      (f: any) =>
         f.properties && f.properties.name === "Direction of Travel Line",
     );
     expect(directionFeature).toBeDefined();
@@ -78,10 +78,10 @@ describe("toGeoJSON", () => {
   it("omits dispersion and direction features when ipp has no direction marker", () => {
     const result = toGeoJSON(makeMarkers(false), behavior);
     const dispersion = result.features.filter(
-      (f) => f.properties && f.properties.name === "Dispersion",
+      (f: any) => f.properties && f.properties.name === "Dispersion",
     );
     const direction = result.features.filter(
-      (f) =>
+      (f: any) =>
         f.properties && f.properties.name === "Direction of Travel Line",
     );
     expect(dispersion).toHaveLength(0);
