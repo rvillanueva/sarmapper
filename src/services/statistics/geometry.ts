@@ -98,6 +98,152 @@ export function createDirectionLineLayer(ippLngLat, directionLngLat) {
     }
   })
 }
+function buildSectorPolygon(centerLngLat, innerRadius, outerRadius, startBearing, endBearing) {
+  const c = new LngLat(centerLngLat);
+  const angleSpan = endBearing - startBearing;
+  const isFullCircle = Math.abs(angleSpan) >= 360 - 1e-6;
+  const numSamples = Math.max(8, Math.ceil(Math.abs(angleSpan) / 5));
+  const step = angleSpan / numSamples;
+  const outerPts = [];
+  for (let i = 0; i <= numSamples; i++) {
+    const p = c.moveTo(startBearing + step * i, outerRadius);
+    outerPts.push([p.lng, p.lat]);
+  }
+  if (isFullCircle) {
+    if (innerRadius === 0) {
+      return { type: 'Polygon', coordinates: [outerPts] };
+    }
+    const innerPts = [];
+    for (let i = numSamples; i >= 0; i--) {
+      const p = c.moveTo(startBearing + step * i, innerRadius);
+      innerPts.push([p.lng, p.lat]);
+    }
+    return { type: 'Polygon', coordinates: [outerPts, innerPts] };
+  }
+  if (innerRadius === 0) {
+    const ring = [[c.lng, c.lat], ...outerPts, [c.lng, c.lat]];
+    return { type: 'Polygon', coordinates: [ring] };
+  }
+  const innerPts = [];
+  for (let i = numSamples; i >= 0; i--) {
+    const p = c.moveTo(startBearing + step * i, innerRadius);
+    innerPts.push([p.lng, p.lat]);
+  }
+  const ring = [...outerPts, ...innerPts, outerPts[0]];
+  return { type: 'Polygon', coordinates: [ring] };
+}
+
+function computeProbabilityCells(ippLngLat, destinationLngLat, behavior) {
+  const distances = behavior.getDistanceProbabilities().map(d => d.value * 1000);
+  const cumDistProbs = [0.25, 0.50, 0.75, 0.95];
+  const distBands = [
+    { inner: 0, outer: distances[0], prob: cumDistProbs[0] },
+    { inner: distances[0], outer: distances[1], prob: cumDistProbs[1] - cumDistProbs[0] },
+    { inner: distances[1], outer: distances[2], prob: cumDistProbs[2] - cumDistProbs[1] },
+    { inner: distances[2], outer: distances[3], prob: cumDistProbs[3] - cumDistProbs[2] },
+  ];
+
+  let baseAngle = 0;
+  let angBands;
+
+  if (destinationLngLat) {
+    const ipp = new LngLat(ippLngLat);
+    const dest = new LngLat(destinationLngLat);
+    baseAngle = dest.getBearingTo(ipp);
+    const { angles } = behavior.getDispersion();
+    const cumAng = [0.25, 0.50, 0.75, 0.95];
+    const halfBand = i => (i === 0 ? cumAng[0] : cumAng[i] - cumAng[i - 1]) / 2;
+    angBands = [
+      { start: 0, end: angles[0], prob: halfBand(0) },
+      { start: angles[0], end: angles[1], prob: halfBand(1) },
+      { start: angles[1], end: angles[2], prob: halfBand(2) },
+      { start: angles[2], end: angles[3], prob: halfBand(3) },
+      { start: -angles[0], end: 0, prob: halfBand(0) },
+      { start: -angles[1], end: -angles[0], prob: halfBand(1) },
+      { start: -angles[2], end: -angles[1], prob: halfBand(2) },
+      { start: -angles[3], end: -angles[2], prob: halfBand(3) },
+    ];
+    if (angles[3] < 180) {
+      angBands.push({ start: angles[3], end: 360 - angles[3], prob: 0.05 });
+    }
+  } else {
+    angBands = [{ start: 0, end: 360, prob: 1.0 }];
+  }
+
+  const cells = [];
+  for (const dist of distBands) {
+    const ringArea = Math.PI * (dist.outer * dist.outer - dist.inner * dist.inner);
+    for (const ang of angBands) {
+      const angularFraction = (ang.end - ang.start) / 360;
+      const cellArea = ringArea * angularFraction;
+      const probability = dist.prob * ang.prob;
+      const density = cellArea > 0 ? probability / cellArea : 0;
+      const polygon = buildSectorPolygon(
+        ippLngLat,
+        dist.inner,
+        dist.outer,
+        baseAngle + ang.start,
+        baseAngle + ang.end,
+      );
+      cells.push({ polygon, density, probability });
+    }
+  }
+
+  const maxDensity = Math.max(...cells.map(c => c.density));
+  cells.forEach(c => {
+    c.intensity = maxDensity > 0 ? Math.pow(c.density / maxDensity, 0.25) : 0;
+  });
+
+  return cells;
+}
+
+export function createHeatmapLayer(ippLngLat, destinationLngLat, behavior) {
+  behavior = new StatisticalBehavior(behavior);
+  const cells = computeProbabilityCells(ippLngLat, destinationLngLat, behavior);
+  const features = cells.map(cell => ({
+    type: 'Feature',
+    properties: {
+      name: 'Probability',
+      density: cell.density,
+      intensity: cell.intensity,
+      probability: cell.probability,
+    },
+    geometry: cell.polygon,
+  }));
+  return new MapStyleLayer({
+    id: 'probability-heatmap',
+    type: 'fill',
+    source: {
+      type: 'geojson',
+      data: {
+        type: 'FeatureCollection',
+        features,
+      },
+    },
+    layout: {},
+    paint: {
+      'fill-color': [
+        'interpolate',
+        ['linear'],
+        ['get', 'intensity'],
+        0,    '#2c7bb6',
+        0.25, '#abd9e9',
+        0.5,  '#ffffbf',
+        0.75, '#fdae61',
+        1,    '#d7191c',
+      ],
+      'fill-opacity': [
+        'interpolate',
+        ['linear'],
+        ['get', 'intensity'],
+        0,   0.15,
+        1,   0.6,
+      ],
+      'fill-outline-color': 'rgba(0,0,0,0.05)',
+    },
+  });
+}
+
 export function createDispersionLinesLayer(ippLngLat, destinationLngLat, behavior) {
   ippLngLat = new LngLat(ippLngLat);
   destinationLngLat = new LngLat(destinationLngLat);
