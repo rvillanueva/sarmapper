@@ -19,7 +19,7 @@ export const Route = createRootRoute({
       },
       {
         name: "apple-mobile-web-app-title",
-        content: "SAR Mapper",
+        content: "SARMapper",
       },
     ],
     links: [
