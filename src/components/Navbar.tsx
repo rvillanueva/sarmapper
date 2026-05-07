@@ -245,6 +245,13 @@ export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
                   className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
                 >
                   Ryan Villanueva
+                </a>{" "}
+                at{" "}
+                <a
+                  href="https://plucky.ai"
+                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
+                >
+                  Plucky
                 </a>
                 .
               </p>
