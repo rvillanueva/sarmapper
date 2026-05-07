@@ -128,12 +128,29 @@ export default class SearchMap extends EventEmitter {
       this.markers.ipp = ipp;
       ipp.setLngLat(next.toJSON());
       if (this.map) ipp.addTo(this.map);
+      let dragStartIpp: { lng: number; lat: number } | null = null;
+      let dragStartDest: { lng: number; lat: number } | null = null;
       ipp.on('dragstart', () => {
+        const ippPos = ipp.getLngLat();
+        dragStartIpp = { lng: ippPos.lng, lat: ippPos.lat };
+        if (this.markers.destination) {
+          const destPos = this.markers.destination.getLngLat();
+          dragStartDest = { lng: destPos.lng, lat: destPos.lat };
+        } else {
+          dragStartDest = null;
+        }
         updateStore();
         this.statsLayer.clearRings();
         this.statsLayer.clearDispersion();
       });
       ipp.on('drag', () => {
+        if (this.markers.destination && dragStartIpp && dragStartDest) {
+          const ippPos = ipp.getLngLat();
+          this.markers.destination.setLngLat({
+            lng: dragStartDest.lng + (ippPos.lng - dragStartIpp.lng),
+            lat: dragStartDest.lat + (ippPos.lat - dragStartIpp.lat),
+          });
+        }
         updateStore();
       });
       ipp.on('dragend', () => {
@@ -141,6 +158,11 @@ export default class SearchMap extends EventEmitter {
         if (this.markers.destination && this.behavior) {
           this.statsLayer.drawDispersion(ipp, this.markers.destination, this.behavior);
         }
+        if (this.markers.destination) {
+          useAppStore.getState().setDirectionMarker([{ _id: 'direction', lngLat: this.markers.destination.getLngLat() }]);
+        }
+        dragStartIpp = null;
+        dragStartDest = null;
         updateStore();
       });
     }
