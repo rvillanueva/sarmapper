@@ -9,8 +9,11 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useAppStore } from "../store/appStore";
 import searchMap from "../store/searchMap";
 import BehaviorProfiles from "../services/statistics/StatisticalBehaviorProfiles";
+import { readUrlState, writeUrlState } from "../utils/urlState";
 
 const profiles = new BehaviorProfiles();
+const DEFAULT_BEHAVIOR_KEYS = ["hiker", "temperate", "mtn"];
+const DEFAULT_START_POINT = { lat: 37.775754, lng: -119.348739 };
 
 interface ContextMenuState {
   x: number;
@@ -27,17 +30,37 @@ export default function App() {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   useEffect(() => {
-    const behavior = profiles.getClosestBehaviorByHierarchy([
-      "hiker",
-      "temperate",
-      "mtn",
-    ]);
-    const startPoint = { lat: 37.775754, lng: -119.348739 };
+    const urlState = readUrlState();
+    const behaviorKeys = urlState.behaviorHierarchy ?? DEFAULT_BEHAVIOR_KEYS;
+    const behavior = profiles.getClosestBehaviorByHierarchy(behaviorKeys);
+    const startPoint = urlState.ipp ?? DEFAULT_START_POINT;
+
+    const unsubscribe = useAppStore.subscribe((state) => {
+      const ippLngLat = state.markers.byId.ipp?.lngLat;
+      const directionLngLat = state.markers.byId.direction?.lngLat;
+      writeUrlState({
+        ipp: ippLngLat
+          ? { lng: ippLngLat.lng, lat: ippLngLat.lat }
+          : undefined,
+        direction: directionLngLat
+          ? { lng: directionLngLat.lng, lat: directionLngLat.lat }
+          : undefined,
+        behaviorHierarchy: state.behavior?.hierarchy,
+      });
+    });
+
     setMapCenter(startPoint);
     searchMap.setBehavior(behavior);
-    searchMap.on("load", () => searchMap.setIPPMarker(startPoint));
+    searchMap.on("load", () => {
+      searchMap.setIPPMarker(startPoint);
+      if (urlState.direction) {
+        searchMap.setDestinationMarker(urlState.direction);
+      }
+    });
     searchMap.on("move", () => setMapCenter(searchMap.getLngLat()));
     searchMap.load("map", startPoint);
+
+    return () => unsubscribe();
   }, [setMapCenter]);
 
   useEffect(() => {
