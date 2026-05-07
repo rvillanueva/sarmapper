@@ -241,54 +241,75 @@ export default function Navbar({
                 <X size={18} strokeWidth={1.5} />
               </Dialog.Close>
             </div>
-            <div className="text-[14.5px] text-slate-warm space-y-4 leading-relaxed font-light">
-              <p className="m-0">
-                Interface and visualization designed by{" "}
-                <a
-                  href="mailto:ryan@sarmapper.org"
-                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
-                >
-                  Ryan Villanueva
-                </a>{" "}
-                at{" "}
-                <a
-                  href="https://plucky.ai"
-                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
-                >
-                  Plucky
-                </a>
-                .
+            <div>
+              <p className="text-[14.5px] text-slate-warm leading-relaxed font-light m-0">
+                A mapping tool that visualizes the statistical behavior of
+                lost persons to support Search and Rescue planning.
               </p>
-              <p className="m-0">
-                Statistical behavior data from{" "}
-                <a
-                  href="http://www.dbs-sar.com/"
-                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
-                >
-                  Lost Person Behavior
-                </a>{" "}
-                by Robert Koester.
-              </p>
-              <p className="m-0">
-                Open source code available on{" "}
-                <a
-                  href="https://github.com/rvillanueva/sarmapper"
-                  className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
-                >
-                  Github
-                </a>
-                .
-              </p>
-              <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-warm-gray leading-loose m-0 pt-3 border-t border-rule">
-                The Lost Person Behavior Mapper does not guarantee the
-                information provided is fully accurate. It is intended as a
-                supplemental tool for Search and Rescue efforts and cannot
-                replace other techniques. To report a missing person, contact
-                local law enforcement immediately.
-              </p>
-              <div className="pt-4 border-t border-rule">
+
+              <dl className="mt-6 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-2.5 text-[13.5px] text-slate-warm font-light leading-relaxed">
+                <dt className="font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray pt-[5px]">
+                  Design
+                </dt>
+                <dd className="m-0">
+                  Ryan Villanueva at{" "}
+                  <a
+                    href="https://plucky.ai"
+                    className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
+                  >
+                    Plucky
+                  </a>
+                </dd>
+
+                <dt className="font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray pt-[5px]">
+                  Data
+                </dt>
+                <dd className="m-0">
+                  <a
+                    href="http://www.dbs-sar.com/"
+                    className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
+                  >
+                    Lost Person Behavior
+                  </a>{" "}
+                  by Robert Koester
+                </dd>
+
+                <dt className="font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray pt-[5px]">
+                  Source
+                </dt>
+                <dd className="m-0">
+                  <a
+                    href="https://github.com/rvillanueva/sarmapper"
+                    className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
+                  >
+                    GitHub
+                  </a>
+                </dd>
+
+                <dt className="font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray pt-[5px]">
+                  Contact
+                </dt>
+                <dd className="m-0">
+                  <a
+                    href="mailto:ryan@sarmapper.org"
+                    className="font-mono text-[12px] text-charcoal hover:text-orange-brand transition-colors break-all"
+                  >
+                    ryan@sarmapper.org
+                  </a>
+                </dd>
+              </dl>
+
+              <div className="mt-6 pt-5 border-t border-rule">
                 <Subscribe />
               </div>
+
+              <p className="mt-6 pt-5 border-t border-rule text-[11.5px] text-warm-gray leading-relaxed font-light m-0">
+                The Lost Person Behavior Mapper does not guarantee the
+                information provided is fully accurate. It is a supplemental
+                tool for Search and Rescue efforts and cannot replace other
+                techniques. To report a missing person, contact local law
+                enforcement immediately.
+              </p>
             </div>
           </Dialog.Popup>
         </Dialog.Portal>
