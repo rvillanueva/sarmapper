@@ -241,13 +241,13 @@ export default function Navbar({
                 <X size={18} strokeWidth={1.5} />
               </Dialog.Close>
             </div>
-            <div className="space-y-5">
+            <div>
               <p className="text-[14.5px] text-slate-warm leading-relaxed font-light m-0">
                 A mapping tool that visualizes the statistical behavior of
                 lost persons to support Search and Rescue planning.
               </p>
 
-              <dl className="grid grid-cols-[5.5rem_1fr] gap-x-4 gap-y-3 text-[13.5px] text-slate-warm font-light leading-relaxed m-0">
+              <dl className="mt-6 grid grid-cols-[5rem_1fr] gap-x-4 gap-y-2.5 text-[13.5px] text-slate-warm font-light leading-relaxed">
                 <dt className="font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray pt-[5px]">
                   Design
                 </dt>
@@ -299,16 +299,17 @@ export default function Navbar({
                 </dd>
               </dl>
 
-              <p className="font-mono text-[11px] uppercase tracking-[0.08em] text-warm-gray leading-loose m-0 pt-4 border-t border-rule">
-                The Lost Person Behavior Mapper does not guarantee the
-                information provided is fully accurate. It is intended as a
-                supplemental tool for Search and Rescue efforts and cannot
-                replace other techniques. To report a missing person, contact
-                local law enforcement immediately.
-              </p>
-              <div className="pt-4 border-t border-rule">
+              <div className="mt-6 pt-5 border-t border-rule">
                 <Subscribe />
               </div>
+
+              <p className="mt-6 pt-5 border-t border-rule text-[11.5px] text-warm-gray leading-relaxed font-light m-0">
+                The Lost Person Behavior Mapper does not guarantee the
+                information provided is fully accurate. It is a supplemental
+                tool for Search and Rescue efforts and cannot replace other
+                techniques. To report a missing person, contact local law
+                enforcement immediately.
+              </p>
             </div>
           </Dialog.Popup>
         </Dialog.Portal>
