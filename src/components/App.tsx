@@ -73,11 +73,13 @@ export default function App() {
         >
           <div id="map" />
           <MapSwitcher />
-          <BehaviorBadge
-            behavior={behavior}
-            onOpenDetails={() => setActiveModal("behavior")}
-          />
-          <Legend />
+          <div className="absolute bottom-7 right-2 z-10 flex flex-col items-end gap-2">
+            <BehaviorBadge
+              behavior={behavior}
+              onOpenDetails={() => setActiveModal("behavior")}
+            />
+            <Legend />
+          </div>
           {contextMenu && (
             <MapContextMenu
               x={contextMenu.x}

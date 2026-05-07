@@ -20,7 +20,7 @@ export default function Legend() {
   }, []);
 
   return (
-    <div className="absolute bottom-7 right-2 z-10 flex flex-col items-end">
+    <>
       {open ? (
         <div className="bg-white rounded-lg shadow-[0_1px_4px_rgba(0,0,0,0.06),0_0_0_1px_var(--plk-rule-strong)] p-3 w-[220px]">
           <div className="flex items-center justify-between mb-2">
@@ -92,6 +92,6 @@ export default function Legend() {
           <Info size={14} strokeWidth={1.75} />
         </button>
       )}
-    </div>
+    </>
   );
 }
