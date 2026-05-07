@@ -9,7 +9,12 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useAppStore } from "../store/appStore";
 import searchMap from "../store/searchMap";
 import BehaviorProfiles from "../services/statistics/StatisticalBehaviorProfiles";
-import { readUrlState, writeUrlState } from "../utils/urlState";
+import {
+  readUrlState,
+  sameLngLat,
+  sameStringArray,
+  writeUrlState,
+} from "../utils/urlState";
 
 const profiles = new BehaviorProfiles();
 const DEFAULT_BEHAVIOR_KEYS = ["hiker", "temperate", "mtn"];
@@ -35,9 +40,20 @@ export default function App() {
     const behavior = profiles.getClosestBehaviorByHierarchy(behaviorKeys);
     const startPoint = urlState.ipp ?? DEFAULT_START_POINT;
 
-    const unsubscribe = useAppStore.subscribe((state) => {
+    const unsubscribe = useAppStore.subscribe((state, prevState) => {
       const ippLngLat = state.markers.byId.ipp?.lngLat;
       const directionLngLat = state.markers.byId.direction?.lngLat;
+      const hierarchy = state.behavior?.hierarchy;
+      const prevIppLngLat = prevState.markers.byId.ipp?.lngLat;
+      const prevDirectionLngLat = prevState.markers.byId.direction?.lngLat;
+      const prevHierarchy = prevState.behavior?.hierarchy;
+      if (
+        sameLngLat(ippLngLat, prevIppLngLat) &&
+        sameLngLat(directionLngLat, prevDirectionLngLat) &&
+        sameStringArray(hierarchy, prevHierarchy)
+      ) {
+        return;
+      }
       writeUrlState({
         ipp: ippLngLat
           ? { lng: ippLngLat.lng, lat: ippLngLat.lat }
@@ -45,7 +61,7 @@ export default function App() {
         direction: directionLngLat
           ? { lng: directionLngLat.lng, lat: directionLngLat.lat }
           : undefined,
-        behaviorHierarchy: state.behavior?.hierarchy,
+        behaviorHierarchy: hierarchy,
       });
     });
 
