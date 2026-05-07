@@ -9,8 +9,16 @@ import "mapbox-gl/dist/mapbox-gl.css";
 import { useAppStore } from "../store/appStore";
 import searchMap from "../store/searchMap";
 import BehaviorProfiles from "../services/statistics/StatisticalBehaviorProfiles";
+import {
+  readUrlState,
+  sameLngLat,
+  sameStringArray,
+  writeUrlState,
+} from "../utils/urlState";
 
 const profiles = new BehaviorProfiles();
+const DEFAULT_BEHAVIOR_KEYS = ["hiker", "temperate", "mtn"];
+const DEFAULT_START_POINT = { lat: 37.775754, lng: -119.348739 };
 
 interface ContextMenuState {
   x: number;
@@ -27,17 +35,80 @@ export default function App() {
   const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   useEffect(() => {
-    const behavior = profiles.getClosestBehaviorByHierarchy([
-      "hiker",
-      "temperate",
-      "mtn",
-    ]);
-    const startPoint = { lat: 37.775754, lng: -119.348739 };
+    const urlState = readUrlState();
+    const behaviorKeys = urlState.behaviorHierarchy ?? DEFAULT_BEHAVIOR_KEYS;
+    const behavior = profiles.getClosestBehaviorByHierarchy(behaviorKeys);
+    const startPoint = urlState.ipp ?? DEFAULT_START_POINT;
+
+    let isDragging = false;
+
+    const persistCurrentState = () => {
+      const state = useAppStore.getState();
+      const ippLngLat = state.markers.byId.ipp?.lngLat;
+      const directionLngLat = state.markers.byId.direction?.lngLat;
+      writeUrlState({
+        ipp: ippLngLat
+          ? { lng: ippLngLat.lng, lat: ippLngLat.lat }
+          : undefined,
+        direction: directionLngLat
+          ? { lng: directionLngLat.lng, lat: directionLngLat.lat }
+          : undefined,
+        behaviorHierarchy: state.behavior?.hierarchy,
+      });
+    };
+
+    const handleDragStart = () => {
+      isDragging = true;
+    };
+    const handleDragEnd = () => {
+      isDragging = false;
+      persistCurrentState();
+    };
+    searchMap.on("marker:dragstart", handleDragStart);
+    searchMap.on("marker:dragend", handleDragEnd);
+
+    const unsubscribe = useAppStore.subscribe((state, prevState) => {
+      if (isDragging) return;
+      const ippLngLat = state.markers.byId.ipp?.lngLat;
+      const directionLngLat = state.markers.byId.direction?.lngLat;
+      const hierarchy = state.behavior?.hierarchy;
+      const prevIppLngLat = prevState.markers.byId.ipp?.lngLat;
+      const prevDirectionLngLat = prevState.markers.byId.direction?.lngLat;
+      const prevHierarchy = prevState.behavior?.hierarchy;
+      if (
+        sameLngLat(ippLngLat, prevIppLngLat) &&
+        sameLngLat(directionLngLat, prevDirectionLngLat) &&
+        sameStringArray(hierarchy, prevHierarchy)
+      ) {
+        return;
+      }
+      writeUrlState({
+        ipp: ippLngLat
+          ? { lng: ippLngLat.lng, lat: ippLngLat.lat }
+          : undefined,
+        direction: directionLngLat
+          ? { lng: directionLngLat.lng, lat: directionLngLat.lat }
+          : undefined,
+        behaviorHierarchy: hierarchy,
+      });
+    });
+
     setMapCenter(startPoint);
     searchMap.setBehavior(behavior);
-    searchMap.on("load", () => searchMap.setIPPMarker(startPoint));
+    searchMap.on("load", () => {
+      searchMap.setIPPMarker(startPoint);
+      if (urlState.direction) {
+        searchMap.setDestinationMarker(urlState.direction);
+      }
+    });
     searchMap.on("move", () => setMapCenter(searchMap.getLngLat()));
     searchMap.load("map", startPoint);
+
+    return () => {
+      searchMap.off("marker:dragstart", handleDragStart);
+      searchMap.off("marker:dragend", handleDragEnd);
+      unsubscribe();
+    };
   }, [setMapCenter]);
 
   useEffect(() => {

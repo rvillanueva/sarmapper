@@ -146,6 +146,7 @@ export default class SearchMap extends EventEmitter {
         } else {
           dragStartDest = null;
         }
+        this.emit('marker:dragstart');
         updateStore();
         this.statsLayer.clearRings();
         this.statsLayer.clearDispersion();
@@ -172,6 +173,7 @@ export default class SearchMap extends EventEmitter {
         dragStartIpp = null;
         dragStartDest = null;
         updateStore();
+        this.emit('marker:dragend');
       });
     }
     if (this.behavior) this.statsLayer.drawRings(this.markers.ipp, this.behavior);
@@ -215,6 +217,7 @@ export default class SearchMap extends EventEmitter {
       if (this.map) destination.addTo(this.map);
       destination.on('dragstart', () => {
         this.statsLayer.clearDispersion();
+        this.emit('marker:dragstart');
       });
       destination.on('drag', () => {
         this._updateDirectionRotation();
@@ -225,6 +228,7 @@ export default class SearchMap extends EventEmitter {
         }
         this._updateDirectionRotation();
         useAppStore.getState().setDirectionMarker([{ _id: 'direction', lngLat: destination.getLngLat() }]);
+        this.emit('marker:dragend');
       });
     }
     this._updateDirectionRotation();
