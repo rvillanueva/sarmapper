@@ -45,15 +45,16 @@ export default function Subscribe() {
       }
 
       const data = await res.json().catch(() => null);
+      localStorage.removeItem(RATE_LIMIT_KEY);
       setStatus('error');
       setErrorMessage(data?.message ?? res.statusText);
     } catch (error) {
-      if (error instanceof Error && error.message === 'Failed to fetch') {
+      if (error instanceof TypeError) {
         setStatus('error');
         setErrorMessage('Too many signups, please try again in a little while');
         return;
       }
-      localStorage.setItem(RATE_LIMIT_KEY, '');
+      localStorage.removeItem(RATE_LIMIT_KEY);
       setStatus('error');
       setErrorMessage(
         error instanceof Error && error.message
