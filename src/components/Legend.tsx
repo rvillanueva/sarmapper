@@ -46,10 +46,18 @@ export default function Legend() {
               </span>
             </li>
             <li className="flex items-center gap-2.5">
-              <span
-                aria-hidden
-                className="inline-block h-2.5 w-2.5 rounded-full bg-ink border-2 border-white shadow-[0_1px_2px_rgba(0,0,0,0.2)] shrink-0"
-              />
+              <span aria-hidden className="inline-flex h-3.5 w-3.5 shrink-0 items-center justify-center">
+                <svg viewBox="0 0 24 24" className="h-3.5 w-3.5">
+                  <path
+                    d="M12 2 L20.5 21.5 L12 17 L3.5 21.5 Z"
+                    fill="#1a1816"
+                    stroke="#ffffff"
+                    strokeWidth="1.5"
+                    strokeLinejoin="round"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              </span>
               <span className="text-[12px] text-charcoal leading-snug">
                 Direction of Travel
               </span>
@@ -72,7 +80,10 @@ export default function Legend() {
               <span
                 aria-hidden
                 className="inline-block w-4 shrink-0"
-                style={{ borderTop: "2px solid #3a3632", opacity: 0.85 }}
+                style={{
+                  borderTop: "1.5px dotted #6e6960",
+                  opacity: 0.7,
+                }}
               />
               <span className="text-[12px] text-charcoal leading-snug">
                 Direction line

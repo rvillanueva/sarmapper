@@ -95,11 +95,14 @@ export function createDirectionLineLayer(ippLngLat: LngLatInput, directionLngLat
         },
       },
     },
-    'layout': {},
+    'layout': {
+      'line-cap': 'round',
+    },
     'paint': {
-      'line-color': '#3a3632',
-      'line-width': 2,
-      'line-opacity': 0.7,
+      'line-color': '#6e6960',
+      'line-width': 1.25,
+      'line-opacity': 0.45,
+      'line-dasharray': [0, 2.5],
     },
   });
 }
@@ -176,7 +179,7 @@ function computeProbabilityCells(
   if (destinationLngLat) {
     const ipp = new LngLat(ippLngLat);
     const dest = new LngLat(destinationLngLat);
-    baseAngle = dest.getBearingTo(ipp);
+    baseAngle = ipp.getBearingTo(dest);
     const { angles } = behavior.getDispersion();
     const cumAng = [0.25, 0.50, 0.75, 0.95];
     const rearProb = 1 - cumAng[3];
@@ -310,7 +313,7 @@ export function createDispersionLinesLayer(
     : new StatisticalBehavior(behavior);
   const { angles } = stats.getDispersion();
   const dist = stats.getDistanceProbabilities()[3].value;
-  const baseAngle = destination.getBearingTo(ipp);
+  const baseAngle = ipp.getBearingTo(destination);
   const leftLines = angles.map((angle: number) => ({
     start: ipp,
     end: ipp.moveTo(baseAngle + angle, dist * 1000),
