@@ -1,6 +1,6 @@
 import { useCallback } from "react";
 import { Dialog } from "@base-ui/react/dialog";
-import { MapPin, BarChart3, Download, Info, X } from "lucide-react";
+import { MapPin, BarChart3, Download, Info, X, Github } from "lucide-react";
 import { useAppStore } from "../store/appStore";
 import BehaviorProfiles from "../services/statistics/StatisticalBehaviorProfiles";
 import { downloadGPX, downloadKML } from "../actions/downloadActions";
@@ -280,9 +280,10 @@ export default function Navbar({
                 <dd className="m-0">
                   <a
                     href="https://github.com/rvillanueva/sarmapper"
-                    className="text-orange-brand hover:text-charcoal transition-colors underline-offset-2"
+                    aria-label="Source code on GitHub"
+                    className="inline-flex items-center text-charcoal hover:text-orange-brand transition-colors"
                   >
-                    github.com/rvillanueva/sarmapper
+                    <Github size={16} strokeWidth={1.75} />
                   </a>
                 </dd>
 
