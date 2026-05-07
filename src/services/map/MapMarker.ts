@@ -8,6 +8,8 @@ export interface MarkerOptions {
   id?: string;
   className?: string;
   draggable?: boolean;
+  innerHTML?: string;
+  rotationAlignment?: 'map' | 'viewport' | 'auto';
   [key: string]: unknown;
 }
 
@@ -15,10 +17,12 @@ export default class MapMarker {
   map: mapboxgl.Map | null;
   markerOptions: MarkerOptions;
   marker: mapboxgl.Marker;
+  el!: HTMLElement;
   id!: string;
   on: mapboxgl.Marker['on'];
   setLngLat: mapboxgl.Marker['setLngLat'];
   getLngLat: mapboxgl.Marker['getLngLat'];
+  setRotation: mapboxgl.Marker['setRotation'];
 
   constructor(markerOptions: MarkerOptions) {
     this.map = null;
@@ -27,6 +31,7 @@ export default class MapMarker {
     this.on = this.marker.on.bind(this.marker);
     this.setLngLat = this.marker.setLngLat.bind(this.marker);
     this.getLngLat = this.marker.getLngLat.bind(this.marker);
+    this.setRotation = this.marker.setRotation.bind(this.marker);
   }
   getOptions(): MarkerOptions {
     return this.markerOptions;
@@ -35,6 +40,10 @@ export default class MapMarker {
     const markerOptions = this.getOptions();
     const el = document.createElement('div');
     el.className = markerOptions.className || '';
+    if (markerOptions.innerHTML) {
+      el.innerHTML = markerOptions.innerHTML;
+    }
+    this.el = el;
     this.id = markerOptions.id || UUIDV4();
     return new mapboxgl.Marker({
       ...markerOptions,

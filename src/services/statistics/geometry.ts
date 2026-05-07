@@ -95,11 +95,14 @@ export function createDirectionLineLayer(ippLngLat: LngLatInput, directionLngLat
         },
       },
     },
-    'layout': {},
+    'layout': {
+      'line-cap': 'round',
+    },
     'paint': {
-      'line-color': '#3a3632',
-      'line-width': 2,
-      'line-opacity': 0.7,
+      'line-color': '#6e6960',
+      'line-width': 1.25,
+      'line-opacity': 0.45,
+      'line-dasharray': [0, 2.5],
     },
   });
 }
