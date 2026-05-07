@@ -40,7 +40,35 @@ export default function App() {
     const behavior = profiles.getClosestBehaviorByHierarchy(behaviorKeys);
     const startPoint = urlState.ipp ?? DEFAULT_START_POINT;
 
+    let isDragging = false;
+
+    const persistCurrentState = () => {
+      const state = useAppStore.getState();
+      const ippLngLat = state.markers.byId.ipp?.lngLat;
+      const directionLngLat = state.markers.byId.direction?.lngLat;
+      writeUrlState({
+        ipp: ippLngLat
+          ? { lng: ippLngLat.lng, lat: ippLngLat.lat }
+          : undefined,
+        direction: directionLngLat
+          ? { lng: directionLngLat.lng, lat: directionLngLat.lat }
+          : undefined,
+        behaviorHierarchy: state.behavior?.hierarchy,
+      });
+    };
+
+    const handleDragStart = () => {
+      isDragging = true;
+    };
+    const handleDragEnd = () => {
+      isDragging = false;
+      persistCurrentState();
+    };
+    searchMap.on("marker:dragstart", handleDragStart);
+    searchMap.on("marker:dragend", handleDragEnd);
+
     const unsubscribe = useAppStore.subscribe((state, prevState) => {
+      if (isDragging) return;
       const ippLngLat = state.markers.byId.ipp?.lngLat;
       const directionLngLat = state.markers.byId.direction?.lngLat;
       const hierarchy = state.behavior?.hierarchy;
@@ -76,7 +104,11 @@ export default function App() {
     searchMap.on("move", () => setMapCenter(searchMap.getLngLat()));
     searchMap.load("map", startPoint);
 
-    return () => unsubscribe();
+    return () => {
+      searchMap.off("marker:dragstart", handleDragStart);
+      searchMap.off("marker:dragend", handleDragEnd);
+      unsubscribe();
+    };
   }, [setMapCenter]);
 
   useEffect(() => {
