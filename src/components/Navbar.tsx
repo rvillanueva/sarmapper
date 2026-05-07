@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import { Dialog } from "@base-ui/react/dialog";
 import { MapPin, BarChart3, Download, Info, X } from "lucide-react";
 import { useAppStore } from "../store/appStore";
@@ -10,11 +10,13 @@ import Subscribe from "./Subscribe";
 import ProfileSelector from "./ProfileSelector";
 import BehaviorStats from "./BehaviorStats";
 
+export type ModalType = "markers" | "behavior" | "export" | "about" | null;
+
 interface NavbarProps {
   setBehaviorByKeys: (keys: string[]) => void;
+  activeModal: ModalType;
+  setActiveModal: (modal: ModalType) => void;
 }
-
-type ModalType = "markers" | "behavior" | "export" | "about" | null;
 
 const navItems = [
   { id: "markers" as const, label: "Markers", icon: MapPin },
@@ -31,9 +33,11 @@ const modalPanelClass = `${modalPanelBase} max-w-md`;
 const eyebrowClass =
   "font-mono text-[10px] tracking-[0.18em] uppercase text-warm-gray font-normal";
 
-export default function Navbar({ setBehaviorByKeys }: NavbarProps) {
-  const [activeModal, setActiveModal] = useState<ModalType>(null);
-
+export default function Navbar({
+  setBehaviorByKeys,
+  activeModal,
+  setActiveModal,
+}: NavbarProps) {
   const mapCenter = useAppStore((s) => s.mapCenter);
   const ipp = useAppStore((s) => s.markers.byId.ipp);
   const direction = useAppStore((s) => s.markers.byId.direction);

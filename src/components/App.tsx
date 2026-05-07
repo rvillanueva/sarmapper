@@ -1,8 +1,9 @@
 import { useEffect, useCallback, useState } from "react";
 import "./App.css";
-import Navbar from "./Navbar";
+import Navbar, { type ModalType } from "./Navbar";
 import MapSwitcher from "./MapSwitcher";
 import Legend from "./Legend";
+import BehaviorBadge from "./BehaviorBadge";
 import MapContextMenu from "./MapContextMenu";
 import "mapbox-gl/dist/mapbox-gl.css";
 import { useAppStore } from "../store/appStore";
@@ -21,7 +22,9 @@ export default function App() {
   const setMapCenter = useAppStore((s) => s.setMapCenter);
   const ipp = useAppStore((s) => s.markers.byId.ipp);
   const direction = useAppStore((s) => s.markers.byId.direction);
+  const behavior = useAppStore((s) => s.behavior);
   const [contextMenu, setContextMenu] = useState<ContextMenuState | null>(null);
+  const [activeModal, setActiveModal] = useState<ModalType>(null);
 
   useEffect(() => {
     const behavior = profiles.getClosestBehaviorByHierarchy([
@@ -58,7 +61,11 @@ export default function App() {
 
   return (
     <div className="app">
-      <Navbar setBehaviorByKeys={setBehaviorByKeys} />
+      <Navbar
+        setBehaviorByKeys={setBehaviorByKeys}
+        activeModal={activeModal}
+        setActiveModal={setActiveModal}
+      />
       <div className="app-content">
         <div
           className="map-container"
@@ -66,6 +73,10 @@ export default function App() {
         >
           <div id="map" />
           <MapSwitcher />
+          <BehaviorBadge
+            behavior={behavior}
+            onOpenDetails={() => setActiveModal("behavior")}
+          />
           <Legend />
           {contextMenu && (
             <MapContextMenu
