@@ -113,7 +113,7 @@ export default class SearchMap extends EventEmitter {
     if (!this.markers.ipp || !this.markers.destination) return;
     const ippPos = this.markers.ipp.getLngLat();
     const destPos = this.markers.destination.getLngLat();
-    const bearing = new LngLat(destPos).getBearingTo(ippPos);
+    const bearing = new LngLat(ippPos).getBearingTo(destPos);
     this.markers.destination.setRotation(bearing);
   };
   setIPPMarker = (lngLat: LngLatInput) => {

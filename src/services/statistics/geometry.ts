@@ -179,7 +179,7 @@ function computeProbabilityCells(
   if (destinationLngLat) {
     const ipp = new LngLat(ippLngLat);
     const dest = new LngLat(destinationLngLat);
-    baseAngle = dest.getBearingTo(ipp);
+    baseAngle = ipp.getBearingTo(dest);
     const { angles } = behavior.getDispersion();
     const cumAng = [0.25, 0.50, 0.75, 0.95];
     const rearProb = 1 - cumAng[3];
@@ -313,7 +313,7 @@ export function createDispersionLinesLayer(
     : new StatisticalBehavior(behavior);
   const { angles } = stats.getDispersion();
   const dist = stats.getDistanceProbabilities()[3].value;
-  const baseAngle = destination.getBearingTo(ipp);
+  const baseAngle = ipp.getBearingTo(destination);
   const leftLines = angles.map((angle: number) => ({
     start: ipp,
     end: ipp.moveTo(baseAngle + angle, dist * 1000),

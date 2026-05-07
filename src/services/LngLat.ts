@@ -39,12 +39,12 @@ export default class LngLat {
     const target = new LngLat(lngLat);
     return getRhumbLineBearing(
       {
-        longitude: target.toJSON().lng,
-        latitude: target.toJSON().lat,
-      },
-      {
         longitude: this.lng,
         latitude: this.lat,
+      },
+      {
+        longitude: target.lng,
+        latitude: target.lat,
       },
     );
   }
