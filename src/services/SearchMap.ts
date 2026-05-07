@@ -109,6 +109,13 @@ export default class SearchMap extends EventEmitter {
   resize() {
     if (this.map) this.map.resize();
   }
+  _updateDirectionRotation = () => {
+    if (!this.markers.ipp || !this.markers.destination) return;
+    const ippPos = this.markers.ipp.getLngLat();
+    const destPos = this.markers.destination.getLngLat();
+    const bearing = new LngLat(ippPos).getBearingTo(destPos);
+    this.markers.destination.setRotation(bearing);
+  };
   setIPPMarker = (lngLat: LngLatInput) => {
     const next = new LngLat(lngLat);
     const { setIppMarker } = useAppStore.getState();
@@ -151,6 +158,7 @@ export default class SearchMap extends EventEmitter {
             lat: dragStartDest.lat + (ippPos.lat - dragStartIpp.lat),
           });
         }
+        this._updateDirectionRotation();
         updateStore();
       });
       ipp.on('dragend', () => {
@@ -170,6 +178,7 @@ export default class SearchMap extends EventEmitter {
     if (this.markers.destination && this.behavior) {
       this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
     }
+    this._updateDirectionRotation();
     updateStore();
   };
   clearIPPMarker = () => {
@@ -207,13 +216,18 @@ export default class SearchMap extends EventEmitter {
       destination.on('dragstart', () => {
         this.statsLayer.clearDispersion();
       });
+      destination.on('drag', () => {
+        this._updateDirectionRotation();
+      });
       destination.on('dragend', () => {
         if (this.markers.ipp && this.behavior) {
           this.statsLayer.drawDispersion(this.markers.ipp, destination, this.behavior);
         }
+        this._updateDirectionRotation();
         useAppStore.getState().setDirectionMarker([{ _id: 'direction', lngLat: destination.getLngLat() }]);
       });
     }
+    this._updateDirectionRotation();
     useAppStore.getState().setDirectionMarker([{ _id: 'direction', lngLat: this.markers.destination.getLngLat() }]);
     if (this.markers.ipp && this.behavior) {
       this.statsLayer.drawDispersion(this.markers.ipp, this.markers.destination, this.behavior);
