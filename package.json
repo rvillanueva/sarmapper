@@ -25,7 +25,7 @@
     "events": "^3.3.0",
     "geolib": "^3.3.4",
     "global-mercator": "^3.1.0",
-    "immutable": "^5.1.4",
+    "immutable": "^5.1.8",
     "js-file-download": "^0.4.12",
     "lucide-react": "^0.545.0",
     "mapbox-gl": "^3.18.1",
